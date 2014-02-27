@@ -20,7 +20,8 @@ re_objend  = re.compile('<\s*object')
 re_weight  = re.compile('\{weight=(\d+)\}')
 re_inherit = re.compile('\{inherits=(\d+)\}')
 re_wilds   = re.compile('[\s\*\#\_]+')
-re_nasties = re.compile('[^A-Za-z0-9 ]')
+#re_nasties = re.compile(ur'[^A-Za-z0-9\u4E00-\u9FA5 ]')
+re_nasties = re.compile(r'[^A-Za-z0-9 ]')
 
 # Version of RiveScript we support.
 rs_version = 2.0
@@ -131,6 +132,7 @@ This may be called as either a class method of a method of a RiveScript object."
 
         fh    = codecs.open(filename, 'r', 'utf-8')
         lines = fh.readlines()
+        #lines = [li.encode('utf-8') for li in fh.readlines()]
         fh.close()
 
         self._say("Parsing " + str(len(lines)) + " lines of code from " + filename)
@@ -225,6 +227,7 @@ This may be called as either a class method of a method of a RiveScript object."
                 syntax_error = "Syntax error in " + fname + " line " + str(lineno) + ": " \
                     + syntax_error + " (near: " + cmd + " " + line + ")"
                 if self._strict:
+                    print syntax_error
                     raise Exception(syntax_error)
                 else:
                     self._warn(syntax_error)
@@ -585,7 +588,7 @@ Returns a syntax error string on error; None otherwise."""
             angle  = 0  # Open angled brackets
 
             # Look for obvious errors.
-            match = re.match(r'[^a-z0-9(|)\[\]*_#@{}<>=\s]', line)
+            match = re.match(ur'[^a-z0-9\u4E00-\u9FA5(|)\[\]*_#@{}<>=\s]', line)
             if match:
                 return "Triggers may only contain lowercase letters, numbers, and these symbols: ( | ) [ ] * _ # @ { } < > ="
 
@@ -1733,7 +1736,7 @@ the value is unset at the end of the `reply()` method)."""
         # Set user vars.
         reSet = re.findall('<set (.+?)=(.+?)>', reply)
         for match in reSet:
-            self._say("Set uservar " + str(match[0]) + "=" + str(match[1]))
+            self._say("Set uservar " + str(match[0]) + "=" + unicode(match[1]))
             self._users[user][match[0]] = match[1]
             reply = re.sub('<set ' + re.escape(match[0]) + '=' + re.escape(match[1]) + '>', '', reply)
 
@@ -1779,7 +1782,7 @@ the value is unset at the end of the `reply()` method)."""
             output = 'undefined'
             if match in self._users[user]:
                 output = self._users[user][match]
-            reply = re.sub('<get ' + re.escape(match) + '>', str(output), reply)
+            reply = re.sub('<get ' + re.escape(match) + '>', unicode(output), reply)
 
         # Topic setter.
         reTopic = re.findall(r'\{topic=(.+?)\}', reply)
