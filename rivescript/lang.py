@@ -2,6 +2,10 @@
 # -*- coding: utf-8 -*-
 
 import re
+#from crfseg import Tagger
+import jieba.posseg as pseg
+
+#tagger = Tagger()
 
 def is_hz(c):
     # http://www.iteye.com/topic/558050
@@ -42,6 +46,9 @@ def q2b(ustring):
     return rstring
 
 def split_zh(s):
+    if s.strip() == '':
+        return s
+
     ws = ['']
     hz = False
     for c in q2b(s):
@@ -49,7 +56,7 @@ def split_zh(s):
             ws.append(c)
             hz = True
         else:
-            if c == ' ' and (ws[-1][-1] == ' ' or hz):
+            if c == ' ' and (hz or (ws[-1] != '' and ws[-1][-1] == ' ')):
                 continue
             if hz:
                 ws.append(c)
@@ -58,13 +65,40 @@ def split_zh(s):
                 ws[-1] += c
     return ' '.join(ws)
 
-def merge_zh(s):
-    ws = ['']
-    for w in s.split():
-        if len(w) == 1 and is_hz(w[0]):
-            ws[-1] += w
+ignore_pos = [u'不',u'没',u'未']
+filter_pos = ['c','u','y']
+def normal_zh(s):
+    if s.strip() == '':
+        return s
+
+    words = []
+    #for t in tagger.pos(tagger.cut(s)):
+    for w in pseg.cut(s):
+        t = (w.word, w.flag)
+        #print t[0] + ' / ' + t[1]
+        if any(t[1].find(fi) >= 0 for fi in filter_pos):
+            continue
+        elif t[1].find('d') >= 0 and all(t[0].find(ig) < 0 for ig in ignore_pos):
+            continue
         else:
+            words.append(t[0])
+    return split_zh(' '.join(words))
+
+no_en = re.compile(r'[^a-z0-9]')
+def merge_zh(s):
+    ws = []
+    hz = ''
+    for w in s.split():
+        #if len(w) == 1 and is_hz(w[0]):
+        if no_en.match(w):
+            hz += w
+        else:
+            if hz != '':
+                ws.append(hz)
+                hz = ''
             ws.append(w)
+    if hz != '':
+        ws.append(hz)
     return ' '.join(ws)
 
 # self-test
@@ -83,9 +117,11 @@ if __name__ == '__main__':
             print '%s:%s convert ok!' % (key, value)
         else:
             print '%s:%s convert failure!' % (key, value)
-    ss = u'_2005年我 们   出去玩2，_ 然后test  string hear聘情况！知道道理5abc如何走*。这么说不 *'
+    ss = u'_2005年我 们,   出去玩2，_ 然后test  string hear聘情况！知道道理5abc如何走*。这么说不 *'
     print ss
     ss = split_zh(ss)
     print ss
-    ss = u'ice to meet you,帅 哥'
+    ss = u'帅 哥, ice to meet you, 帅 哥'
     print merge_zh(ss)
+    ss = u'我们在这里，都值得你到这里，而且你的到来是我们的荣幸. 我的名字叫晟敢'
+    print normal_zh(ss)

@@ -67,7 +67,7 @@ class WordSub(dict):
         return self[match.group(0)]
 
     def __setitem__(self, i, y):
-        print "set item: %s,%s" %(i,y)
+        #print "set item: %s,%s" %(i,y)
         self._regexIsDirty = True
         # for each entry the user adds, we actually add three entrys:
         super(type(self),self).__setitem__(string.lower(i),string.lower(y)) # key = value

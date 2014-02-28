@@ -28,7 +28,7 @@
 - <set age=<star>>Cool, I'm <bot age> myself.{weight=49}
 
 + i am a (@malenoun)
-- <set sex=帅 哥>Alright, you're a <star>.
+- <set sex=帅哥>Alright, you're a <star>.
 
 + i am a (@femalenoun)
 - <set sex=female>Alright, you're female.

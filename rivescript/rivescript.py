@@ -28,6 +28,11 @@ re_nasties = re.compile(r'[^A-Za-z0-9 ]')
 # Version of RiveScript we support.
 rs_version = 2.0
 
+def cmd_li(s):
+    for c in s:
+        if c != ' ':
+            return c
+    return ''
 
 class RiveScript:
     """A RiveScript interpreter for Python 2 and 3."""
@@ -130,14 +135,20 @@ This may be called as either a class method of a method of a RiveScript object."
                     # Load this file.
                     self.load_file(os.path.join(directory, item))
                     break
-
+    
     def load_file(self, filename):
         """Load and parse a RiveScript document."""
         self._say("Loading file: " + filename)
 
         fh    = codecs.open(filename, 'r', 'utf-8')
         #lines = fh.readlines()
-        lines = [lang.split_zh(li) for li in fh.readlines()]
+        lines = [lang.normal_zh(li) if cmd_li(li) == u'+' else lang.split_zh(li) for li in fh.readlines()]
+        '''
+        # Just test hear
+        for li in [li for li in lines if cmd_li(li) == u'+']:
+            print li + " ",
+        '''
+
         fh.close()
 
         self._say("Parsing " + str(len(lines)) + " lines of code from " + filename)
@@ -374,7 +385,6 @@ This may be called as either a class method of a method of a RiveScript object."
 
                     # Did this have multiple parts?
                     parts = value.split("<crlf>")
-                    print parts
 
                     # Process each line of array data.
                     fields = []
@@ -1183,6 +1193,11 @@ the value is unset at the end of the `reply()` method)."""
         # Store the current user in case an object macro needs it.
         self._current_user = user
 
+        # updated by jannson
+        #msg = lang.split_zh(msg)
+        msg = lang.normal_zh(msg)
+        #print msg
+
         # Format their message.
         msg = self._format_message(msg)
 
@@ -1214,7 +1229,6 @@ the value is unset at the end of the `reply()` method)."""
         self._users[user]['__history__']['reply'].extend(oldReply)
         
         #updated by jannson Now merge the reply
-        print type(reply)
         mreply = lang.merge_zh(reply)
 
         # Unset the current user.
@@ -1231,9 +1245,6 @@ the value is unset at the end of the `reply()` method)."""
 
         # Lowercase it.
         msg = msg.lower()
-
-        # updated by jannson
-        msg = lang.split_zh(msg)
 
         # Run substitutions on it.
         msg = self._substitute(msg, "subs")
