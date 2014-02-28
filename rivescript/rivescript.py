@@ -9,6 +9,8 @@ import random
 import pprint
 import copy
 import codecs
+from wordsub import WordSub
+import lang
 
 from . import __version__
 from . import python
@@ -50,8 +52,11 @@ bool utf8:   Enable UTF-8 support."""
         self._depth    = depth  # Recursion depth limit
         self._gvars    = {}     # 'global' variables
         self._bvars    = {}     # 'bot' variables
-        self._subs     = {}     # 'sub' variables
-        self._person   = {}     # 'person' variables
+        #updated by jannson
+        #self._subs     = {}     # 'sub' variables
+        #self._person   = {}     # 'person' variables
+        self._subs      = WordSub()
+        self._person    = WordSub()
         self._arrays   = {}     # 'array' variables
         self._users    = {}     # 'user' variables
         self._freeze   = {}     # frozen 'user' variables
@@ -131,8 +136,8 @@ This may be called as either a class method of a method of a RiveScript object."
         self._say("Loading file: " + filename)
 
         fh    = codecs.open(filename, 'r', 'utf-8')
-        lines = fh.readlines()
-        #lines = [li.encode('utf-8') for li in fh.readlines()]
+        #lines = fh.readlines()
+        lines = [lang.split_zh(li) for li in fh.readlines()]
         fh.close()
 
         self._say("Parsing " + str(len(lines)) + " lines of code from " + filename)
@@ -741,8 +746,9 @@ Returns a syntax error string on error; None otherwise."""
             self._sort_that_triggers()
 
             # Also sort both kinds of substitutions.
-            self._sort_list('subs', self._subs)
-            self._sort_list('person', self._person)
+            # updated by jannson, using WordSub instead
+            #self._sort_list('subs', self._subs)
+            #self._sort_list('person', self._person)
 
     def _sort_that_triggers(self):
         """Make a sorted list of triggers that correspond to %Previous groups."""
@@ -1206,11 +1212,15 @@ the value is unset at the end of the `reply()` method)."""
         oldReply = self._users[user]['__history__']['reply'][:8]
         self._users[user]['__history__']['reply'] = [reply]
         self._users[user]['__history__']['reply'].extend(oldReply)
+        
+        #updated by jannson Now merge the reply
+        print type(reply)
+        mreply = lang.merge_zh(reply)
 
         # Unset the current user.
         self._current_user = None
 
-        return reply
+        return mreply
 
     def _format_message(self, msg):
         """Format a user's message for safe processing."""
@@ -1221,6 +1231,9 @@ the value is unset at the end of the `reply()` method)."""
 
         # Lowercase it.
         msg = msg.lower()
+
+        # updated by jannson
+        msg = lang.split_zh(msg)
 
         # Run substitutions on it.
         msg = self._substitute(msg, "subs")
@@ -1514,10 +1527,13 @@ the value is unset at the end of the `reply()` method)."""
         """Run a kind of substitution on a message."""
 
         # Safety checking.
+        # updated by jannson using WordSub
+        '''
         if not 'lists' in self._sorted:
             raise Exception("You forgot to call sort_replies()!")
         if not list in self._sorted["lists"]:
             raise Exception("You forgot to call sort_replies()!")
+        '''
 
         # Get the substitution map.
         subs = None
@@ -1525,12 +1541,11 @@ the value is unset at the end of the `reply()` method)."""
             subs = self._subs
         else:
             subs = self._person
-
+    
+        '''
         # Make placeholders each time we substitute something.
         ph = []
         i  = 0
-        
-        old_msg = msg
         for pattern in self._sorted["lists"][list]:
             result = subs[pattern]
 
@@ -1544,14 +1559,14 @@ the value is unset at the end of the `reply()` method)."""
             msg = re.sub(r'^' + qm + r'(\W+)', result + r'\1', msg)
             msg = re.sub(r'(\W+)' + qm + r'(\W+)', r'\1' + result + r'\2', msg)
             msg = re.sub(r'(\W+)' + qm + r'$', r'\1' + result, msg)
-            if old_msg != msg:
-                break
 
         placeholders = re.findall(r'\x00(\d+)\x00', msg)
         for match in placeholders:
             i = match
             result = ph[i]
             msg = re.sub(r'\x00' + i + r'\x00', result, msg)
+        '''
+        msg = subs.sub(msg)
 
         # Strip & return.
         return msg.strip()

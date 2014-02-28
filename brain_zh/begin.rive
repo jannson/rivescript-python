@@ -180,7 +180,7 @@
 //! person 我们		= 你们
 
 // Set arrays
-! array malenoun   = 帅 哥|male|guys|boy|dude|boi|man|men|gentleman|gentlemen|男 
+! array malenoun   = 帅哥|male|guys|boy|dude|boi|man|men|gentleman|gentlemen|男 
 ! array loving	   = make love|loving|爱性
 ! array femalenoun = female girl chick woman women lady babe
 ! array mennoun    = males guys boys dudes bois men gentlemen

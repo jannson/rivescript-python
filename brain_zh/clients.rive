@@ -1,15 +1,15 @@
 // Learn stuff about our users.
 
-+ 谈 论 点 (@loving)
++ 谈论点 (@loving)
 - 非法话题，你要被关起来！
 
 + * 是接班人
 - <person> 才是!
 
 + * strong
-- <person> strong too!
+- <person> strong !
 
-+ 我 名 字 叫 *
++ 我名字叫 *
 - <set name=<formal>>Nice to meet you, <get name>.
 - <set name=<formal>><get name>, nice to meet you.
 
