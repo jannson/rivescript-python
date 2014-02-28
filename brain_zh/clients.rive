@@ -1,6 +1,15 @@
 // Learn stuff about our users.
 
-+ 我名字叫*
++ 谈 论 点 (@loving)
+- 非法话题，你要被关起来！
+
++ * 是接班人
+- <person> 才是!
+
++ * strong
+- <person> strong too!
+
++ 我 名 字 叫 *
 - <set name=<formal>>Nice to meet you, <get name>.
 - <set name=<formal>><get name>, nice to meet you.
 
@@ -19,7 +28,7 @@
 - <set age=<star>>Cool, I'm <bot age> myself.{weight=49}
 
 + i am a (@malenoun)
-- <set sex=male>Alright, you're a <star>.
+- <set sex=帅 哥>Alright, you're a <star>.
 
 + i am a (@femalenoun)
 - <set sex=female>Alright, you're female.

@@ -369,6 +369,7 @@ This may be called as either a class method of a method of a RiveScript object."
 
                     # Did this have multiple parts?
                     parts = value.split("<crlf>")
+                    print parts
 
                     # Process each line of array data.
                     fields = []
@@ -1528,7 +1529,8 @@ the value is unset at the end of the `reply()` method)."""
         # Make placeholders each time we substitute something.
         ph = []
         i  = 0
-
+        
+        old_msg = msg
         for pattern in self._sorted["lists"][list]:
             result = subs[pattern]
 
@@ -1542,6 +1544,8 @@ the value is unset at the end of the `reply()` method)."""
             msg = re.sub(r'^' + qm + r'(\W+)', result + r'\1', msg)
             msg = re.sub(r'(\W+)' + qm + r'(\W+)', r'\1' + result + r'\2', msg)
             msg = re.sub(r'(\W+)' + qm + r'$', r'\1' + result, msg)
+            if old_msg != msg:
+                break
 
         placeholders = re.findall(r'\x00(\d+)\x00', msg)
         for match in placeholders:
