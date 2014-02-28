@@ -390,6 +390,8 @@ This may be called as either a class method of a method of a RiveScript object."
                     fields = []
                     for val in parts:
                         if '|' in val:
+                            # updated by jannson
+                            #fields.extend([vv.strip() for vv in val.split('|')])
                             fields.extend(val.split('|'))
                         else:
                             fields.extend(re.split(re_ws, val))
@@ -1194,9 +1196,11 @@ the value is unset at the end of the `reply()` method)."""
         self._current_user = user
 
         # updated by jannson
+        if isinstance(msg, str):
+            msg = msg.decode('utf-8')
         #msg = lang.split_zh(msg)
         msg = lang.normal_zh(msg)
-        #print msg
+        #print 'BEGIN'+msg+'END'
 
         # Format their message.
         msg = self._format_message(msg)
@@ -1389,6 +1393,9 @@ the value is unset at the end of the `reply()` method)."""
                         isMatch = True
                 else:
                     # Non-atomic triggers always need the regexp.
+                    #updated by jannson
+                    #print 'DEBUG match: ^' + regexp + r'$'
+                    #print 'matching:', msg
                     match = re.match(r'^' + regexp + r'$', msg)
                     if match:
                         # The regexp matched!
@@ -1592,6 +1599,7 @@ the value is unset at the end of the `reply()` method)."""
         # Simple replacements.
         regexp = re.sub(r'\*', r'(.+?)', regexp)  # Convert * into (.+?)
         regexp = re.sub(r'#', r'(\d+?)', regexp)  # Convert # into (\d+?)
+        #updated by gan, change to \w+?
         regexp = re.sub(r'_', r'([A-Za-z]+?)', regexp)  # Convert _ into (\w+?)
         regexp = re.sub(r'\{weight=\d+\}', '', regexp) # Remove {weight} tags
         regexp = re.sub(r'<zerowidthstar>', r'(.*?)', regexp)

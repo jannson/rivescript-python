@@ -30,6 +30,9 @@
 + i am a (@malenoun)
 - <set sex=帅哥>Alright, you're a <star>.
 
++ 我是一个 (@malenoun)
+- <set sex=帅哥>知道你是<star>了.
+
 + i am a (@femalenoun)
 - <set sex=female>Alright, you're female.
 
@@ -63,6 +66,9 @@
 - Your name is <get name>.
 - You told me your name is <get name>.
 - Aren't you <get name>?
+
++ 谁是你的(朋友|亲人|友人)
+- 你说的很可以
 
 + (how old am i|do you know how old i am|do you know my age){weight=10}
 - You are <get age> years old.

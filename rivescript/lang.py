@@ -24,6 +24,11 @@ def is_hz(c):
         (0x31C0, 0x31EF)]
     return any(s <= ord(c) <= e for s, e in r)
 
+#TODO do better for this
+def is_en(c):
+    r = [('0','9'), ('A','Z'), ('a','z'), ('=','='), ('/','/')]
+    return any(ord(s) <= ord(c) <= ord(e) for s, e in r)
+
 def q2b(ustring):
     rstring = ""
     for uchar in ustring:
@@ -45,43 +50,69 @@ def q2b(ustring):
             rstring += unichr(inside_code)
     return rstring
 
-def split_zh(s):
-    if s.strip() == '':
-        return s
-
-    ws = ['']
-    hz = False
-    for c in q2b(s):
-        if is_hz(c):
-            ws.append(c)
-            hz = True
+def split_zh(ins):
+    if ins.strip() == '':
+        return ins
+    s = q2b(ins)
+    ss = s.split()
+    rlt = ' '
+    for w in ss:
+        if is_en(w[0]):
+            rlt += ' ' + w
         else:
-            if c == ' ' and (hz or (ws[-1] != '' and ws[-1][-1] == ' ')):
-                continue
-            if hz:
-                ws.append(c)
-                hz = False
+            if is_en(rlt[-1]):
+                rlt += ' ' + w
             else:
-                ws[-1] += c
-    return ' '.join(ws)
+                rlt += w
+    return rlt.strip()
 
 ignore_pos = [u'不',u'没',u'未']
 filter_pos = ['c','u','y']
+
+def find_zh(s):
+    tmp = s[0]
+    hz = is_hz(s[0])
+    for w in s[1:]:
+        if is_hz(w):
+            if hz:
+                tmp += w
+            else:
+                if tmp != '':
+                    yield tmp, False
+                hz = True
+                tmp = w
+        else:
+            if not hz:
+                tmp += w
+            else:
+                if tmp != '':
+                    yield tmp, True
+                hz = False
+                tmp = w
+    yield tmp, hz
+
 def normal_zh(s):
     if s.strip() == '':
         return s
 
     words = []
-    #for t in tagger.pos(tagger.cut(s)):
-    for w in pseg.cut(s):
-        t = (w.word, w.flag)
-        #print t[0] + ' / ' + t[1]
-        if any(t[1].find(fi) >= 0 for fi in filter_pos):
+    for zh_s, zh in find_zh(s):
+        seg = zh_s.strip()
+        if seg == '':
             continue
-        elif t[1].find('d') >= 0 and all(t[0].find(ig) < 0 for ig in ignore_pos):
+        if not zh:
+            words.append(seg)
             continue
-        else:
-            words.append(t[0])
+        for w in pseg.cut(seg):
+            t = (w.word, w.flag)
+            #print t[0] + ' / ' + t[1]
+            if any(t[1].find(fi) >= 0 for fi in filter_pos):
+                continue
+            elif t[1].find('d') >= 0 and all(t[0].find(ig) < 0 for ig in ignore_pos):
+                continue
+            else:
+                words.append(t[0])
+    #print 'BEGSP', ' '.join(words), 'END'
     return split_zh(' '.join(words))
 
 no_en = re.compile(r'[^a-z0-9]')
@@ -119,9 +150,12 @@ if __name__ == '__main__':
             print '%s:%s convert failure!' % (key, value)
     ss = u'_2005年我 们,   出去玩2，_ 然后test  string hear聘情况！知道道理5abc如何走*。这么说不 *'
     print ss
-    ss = split_zh(ss)
-    print ss
-    ss = u'帅 哥, ice to meet you, 帅 哥'
-    print merge_zh(ss)
-    ss = u'我们在这里，都值得你到这里，而且你的到来是我们的荣幸. 我的名字叫晟敢'
-    print normal_zh(ss)
+    #ss = split_zh(ss)
+    #print ss
+    #ss = u'帅 哥, ice to meet you, 帅 哥'
+    #print merge_zh(ss)
+    #ss = u'我们在这里，都值得你到这里，而且你的到来是我们的荣幸. 我的名字叫晟敢'
+    ss = u'i am a 帅哥.谁是你(朋友|亲人|友人)'
+    #print list(find_zh(ss))
+    ss = u'- {ok}    // An {ok} in the response means it\'s okay to get a real reply'
+    print 'BEGIN'+normal_zh(ss)+'END'
