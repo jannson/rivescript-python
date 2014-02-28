@@ -1200,7 +1200,7 @@ the value is unset at the end of the `reply()` method)."""
             msg = msg.decode('utf-8')
         #msg = lang.split_zh(msg)
         msg = lang.normal_zh(msg)
-        #print 'BEGIN'+msg+'END'
+        print 'BEGIN'+msg+'END'
 
         # Format their message.
         msg = self._format_message(msg)

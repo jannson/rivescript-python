@@ -74,6 +74,12 @@
 - You are <get age> years old.
 - You're <get age>.
 
++ 我有 # 岁了
+- 很多人都有<star>岁了
+
++ 我有 * 岁了
+- 能告诉我一个数字么？
+
 + am i a (@malenoun) or a (@femalenoun){weight=10}
 - You're a <get sex>.
 

@@ -60,10 +60,10 @@ def split_zh(ins):
         if is_en(w[0]):
             rlt += ' ' + w
         else:
-            if is_en(rlt[-1]):
-                rlt += ' ' + w
-            else:
-                rlt += w
+            #if is_en(rlt[-1]):
+            #    rlt += ' ' + w
+            #else:
+            rlt = rlt.strip() + w
     return rlt.strip()
 
 ignore_pos = [u'不',u'没',u'未']
@@ -113,7 +113,7 @@ def normal_zh(s):
             else:
                 words.append(t[0])
     #print 'BEGSP', ' '.join(words), 'END'
-    return split_zh(' '.join(words))
+    return split_zh(''.join(words))
 
 no_en = re.compile(r'[^a-z0-9]')
 def merge_zh(s):
@@ -155,7 +155,7 @@ if __name__ == '__main__':
     #ss = u'帅 哥, ice to meet you, 帅 哥'
     #print merge_zh(ss)
     #ss = u'我们在这里，都值得你到这里，而且你的到来是我们的荣幸. 我的名字叫晟敢'
-    ss = u'i am a 帅哥.谁是你(朋友|亲人|友人)'
-    #print list(find_zh(ss))
-    ss = u'- {ok}    // An {ok} in the response means it\'s okay to get a real reply'
+    ss = u'i am a 帅哥.谁9是你(朋友|亲人|友人)'
+    print list(find_zh(ss))
+    #ss = u'- {ok}    // An {ok} in the response means it\'s okay to get a real reply'
     print 'BEGIN'+normal_zh(ss)+'END'
