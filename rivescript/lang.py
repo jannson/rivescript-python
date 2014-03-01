@@ -54,6 +54,7 @@ def split_zh(ins):
     if ins.strip() == '':
         return ins
     s = q2b(ins)
+    '''
     ss = s.split()
     rlt = ' '
     for w in ss:
@@ -65,6 +66,8 @@ def split_zh(ins):
             #else:
             rlt = rlt.strip() + w
     return rlt.strip()
+    '''
+    return re.sub('\s+',' ', s)
 
 ignore_pos = [u'不',u'没',u'未']
 filter_pos = ['c','u','y']
@@ -150,8 +153,8 @@ if __name__ == '__main__':
             print '%s:%s convert failure!' % (key, value)
     ss = u'_2005年我 们,   出去玩2，_ 然后test  string hear聘情况！知道道理5abc如何走*。这么说不 *'
     print ss
-    #ss = split_zh(ss)
-    #print ss
+    ss = split_zh(ss)
+    print ss
     #ss = u'帅 哥, ice to meet you, 帅 哥'
     #print merge_zh(ss)
     #ss = u'我们在这里，都值得你到这里，而且你的到来是我们的荣幸. 我的名字叫晟敢'
