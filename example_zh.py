@@ -3,8 +3,8 @@
 from rivescript import RiveScript
 
 #rs = RiveScript(log='log.example', utf8=True)
-rs = RiveScript(utf8=True)
-rs.load_directory("./brain")
+rs = RiveScript(debug=False, utf8=True)
+rs.load_directory("./brain_zh")
 rs.sort_replies()
 
 print """This is a bare minimal example for how to write your own RiveScript bot!

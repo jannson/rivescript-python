@@ -9,6 +9,8 @@ import random
 import pprint
 import copy
 import codecs
+from wordsub import WordSub
+import lang
 
 from . import __version__
 from . import python
@@ -20,11 +22,17 @@ re_objend  = re.compile('<\s*object')
 re_weight  = re.compile('\{weight=(\d+)\}')
 re_inherit = re.compile('\{inherits=(\d+)\}')
 re_wilds   = re.compile('[\s\*\#\_]+')
-re_nasties = re.compile('[^A-Za-z0-9 ]')
+re_nasties = re.compile(ur'[^A-Za-z0-9\u4E00-\u9FA5 ]')
+#re_nasties = re.compile(r'[^A-Za-z0-9 ]')
 
 # Version of RiveScript we support.
 rs_version = 2.0
 
+def cmd_li(s):
+    for c in s:
+        if c != ' ':
+            return c
+    return ''
 
 class RiveScript:
     """A RiveScript interpreter for Python 2 and 3."""
@@ -49,8 +57,11 @@ bool utf8:   Enable UTF-8 support."""
         self._depth    = depth  # Recursion depth limit
         self._gvars    = {}     # 'global' variables
         self._bvars    = {}     # 'bot' variables
-        self._subs     = {}     # 'sub' variables
-        self._person   = {}     # 'person' variables
+        #updated by jannson
+        #self._subs     = {}     # 'sub' variables
+        #self._person   = {}     # 'person' variables
+        self._subs      = WordSub()
+        self._person    = WordSub()
         self._arrays   = {}     # 'array' variables
         self._users    = {}     # 'user' variables
         self._freeze   = {}     # frozen 'user' variables
@@ -124,13 +135,20 @@ This may be called as either a class method of a method of a RiveScript object."
                     # Load this file.
                     self.load_file(os.path.join(directory, item))
                     break
-
+    
     def load_file(self, filename):
         """Load and parse a RiveScript document."""
         self._say("Loading file: " + filename)
 
         fh    = codecs.open(filename, 'r', 'utf-8')
-        lines = fh.readlines()
+        #lines = fh.readlines()
+        lines = [lang.normal_zh(li) if cmd_li(li) == u'+' else lang.split_zh(li) for li in fh.readlines()]
+        '''
+        # Just test hear
+        for li in [li for li in lines if cmd_li(li) == u'+']:
+            print li + " ",
+        '''
+
         fh.close()
 
         self._say("Parsing " + str(len(lines)) + " lines of code from " + filename)
@@ -225,6 +243,7 @@ This may be called as either a class method of a method of a RiveScript object."
                 syntax_error = "Syntax error in " + fname + " line " + str(lineno) + ": " \
                     + syntax_error + " (near: " + cmd + " " + line + ")"
                 if self._strict:
+                    print syntax_error
                     raise Exception(syntax_error)
                 else:
                     self._warn(syntax_error)
@@ -371,6 +390,8 @@ This may be called as either a class method of a method of a RiveScript object."
                     fields = []
                     for val in parts:
                         if '|' in val:
+                            # updated by jannson
+                            #fields.extend([vv.strip() for vv in val.split('|')])
                             fields.extend(val.split('|'))
                         else:
                             fields.extend(re.split(re_ws, val))
@@ -585,7 +606,7 @@ Returns a syntax error string on error; None otherwise."""
             angle  = 0  # Open angled brackets
 
             # Look for obvious errors.
-            match = re.match(r'[^a-z0-9(|)\[\]*_#@{}<>=\s]', line)
+            match = re.match(ur'[^a-z0-9\u4E00-\u9FA5(|)\[\]*_#@{}<>=\s]', line)
             if match:
                 return "Triggers may only contain lowercase letters, numbers, and these symbols: ( | ) [ ] * _ # @ { } < > ="
 
@@ -737,8 +758,9 @@ Returns a syntax error string on error; None otherwise."""
             self._sort_that_triggers()
 
             # Also sort both kinds of substitutions.
-            self._sort_list('subs', self._subs)
-            self._sort_list('person', self._person)
+            # updated by jannson, using WordSub instead
+            #self._sort_list('subs', self._subs)
+            #self._sort_list('person', self._person)
 
     def _sort_that_triggers(self):
         """Make a sorted list of triggers that correspond to %Previous groups."""
@@ -1173,8 +1195,15 @@ the value is unset at the end of the `reply()` method)."""
         # Store the current user in case an object macro needs it.
         self._current_user = user
 
+        # updated by jannson
+        #if isinstance(msg, str):
+        #    msg = msg.decode('utf-8')
+        #msg = lang.split_zh(msg)
+        #msg = lang.normal_zh(msg)
+
         # Format their message.
         msg = self._format_message(msg)
+        print 'BEGIN:'+msg+':END'
 
         reply = ''
 
@@ -1202,11 +1231,14 @@ the value is unset at the end of the `reply()` method)."""
         oldReply = self._users[user]['__history__']['reply'][:8]
         self._users[user]['__history__']['reply'] = [reply]
         self._users[user]['__history__']['reply'].extend(oldReply)
+        
+        #updated by jannson Now merge the reply
+        mreply = lang.merge_zh(reply)
 
         # Unset the current user.
         self._current_user = None
 
-        return reply
+        return mreply
 
     def _format_message(self, msg):
         """Format a user's message for safe processing."""
@@ -1217,6 +1249,9 @@ the value is unset at the end of the `reply()` method)."""
 
         # Lowercase it.
         msg = msg.lower()
+
+        # Normal it updated by jannson
+        msg = lang.normal_zh(msg)
 
         # Run substitutions on it.
         msg = self._substitute(msg, "subs")
@@ -1361,6 +1396,9 @@ the value is unset at the end of the `reply()` method)."""
                         isMatch = True
                 else:
                     # Non-atomic triggers always need the regexp.
+                    #updated by jannson
+                    #print 'DEBUG match: ^' + regexp + r'$'
+                    #print 'matching:', msg
                     match = re.match(r'^' + regexp + r'$', msg)
                     if match:
                         # The regexp matched!
@@ -1510,10 +1548,13 @@ the value is unset at the end of the `reply()` method)."""
         """Run a kind of substitution on a message."""
 
         # Safety checking.
+        # updated by jannson using WordSub
+        '''
         if not 'lists' in self._sorted:
             raise Exception("You forgot to call sort_replies()!")
         if not list in self._sorted["lists"]:
             raise Exception("You forgot to call sort_replies()!")
+        '''
 
         # Get the substitution map.
         subs = None
@@ -1521,11 +1562,11 @@ the value is unset at the end of the `reply()` method)."""
             subs = self._subs
         else:
             subs = self._person
-
+    
+        '''
         # Make placeholders each time we substitute something.
         ph = []
         i  = 0
-
         for pattern in self._sorted["lists"][list]:
             result = subs[pattern]
 
@@ -1545,6 +1586,8 @@ the value is unset at the end of the `reply()` method)."""
             i = match
             result = ph[i]
             msg = re.sub(r'\x00' + i + r'\x00', result, msg)
+        '''
+        msg = subs.sub(msg)
 
         # Strip & return.
         return msg.strip()
@@ -1559,6 +1602,7 @@ the value is unset at the end of the `reply()` method)."""
         # Simple replacements.
         regexp = re.sub(r'\*', r'(.+?)', regexp)  # Convert * into (.+?)
         regexp = re.sub(r'#', r'(\d+?)', regexp)  # Convert # into (\d+?)
+        #updated by gan, change to \w+?
         regexp = re.sub(r'_', r'([A-Za-z]+?)', regexp)  # Convert _ into (\w+?)
         regexp = re.sub(r'\{weight=\d+\}', '', regexp) # Remove {weight} tags
         regexp = re.sub(r'<zerowidthstar>', r'(.*?)', regexp)
@@ -1584,19 +1628,27 @@ the value is unset at the end of the `reply()` method)."""
 
         # Filter in arrays.
         arrays = re.findall(r'\@(.+?)\b', regexp)
+        #print 'DEBUG@( :', regexp,'###',arrays
         for array in arrays:
             rep = ''
             if array in self._arrays:
                 rep = r'(?:' + '|'.join(self._arrays[array]) + ')'
             regexp = re.sub(r'\@' + re.escape(array) + r'\b', rep, regexp)
+            #print 'DEBUG @(:'+r'\@' + re.escape(array) + r'\b###'+rep+'###'+regexp
+            #print 'DEBUG @( :'+array
 
         # Filter in bot variables.
         bvars = re.findall(r'<bot (.+?)>', regexp)
+        # updated by jannson
         for var in bvars:
+            #print 'IN <BOT:', regexp, bvars, 
             rep = ''
             if var in self._bvars:
                 rep = self._strip_nasties(self._bvars[var])
             regexp = re.sub(r'<bot ' + re.escape(var) + r'>', rep, regexp)
+            # lowercase the name's string ?
+            regexp = regexp.lower()
+            #print "RESULT:"+regexp+":ENDRESULT"
 
         # Filter in user variables.
         uvars = re.findall(r'<get (.+?)>', regexp)
@@ -1733,7 +1785,7 @@ the value is unset at the end of the `reply()` method)."""
         # Set user vars.
         reSet = re.findall('<set (.+?)=(.+?)>', reply)
         for match in reSet:
-            self._say("Set uservar " + str(match[0]) + "=" + str(match[1]))
+            self._say("Set uservar " + str(match[0]) + "=" + unicode(match[1]))
             self._users[user][match[0]] = match[1]
             reply = re.sub('<set ' + re.escape(match[0]) + '=' + re.escape(match[1]) + '>', '', reply)
 
@@ -1779,7 +1831,7 @@ the value is unset at the end of the `reply()` method)."""
             output = 'undefined'
             if match in self._users[user]:
                 output = self._users[user][match]
-            reply = re.sub('<get ' + re.escape(match) + '>', str(output), reply)
+            reply = re.sub('<get ' + re.escape(match) + '>', unicode(output), reply)
 
         # Topic setter.
         reTopic = re.findall(r'\{topic=(.+?)\}', reply)
