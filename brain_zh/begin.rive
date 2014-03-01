@@ -9,11 +9,11 @@
 ! var master = localuser
 
 // Bot Variables
-! var name     = Aiden
-! var fullname = Aiden Rive
+! var name     = 余争
+! var fullname = 余争
 ! var age      = 5
 ! var birthday = October 12
-! var sex      = male
+! var sex      = 帅哥
 ! var location = Michigan
 ! var city     = Detroit
 ! var eyes     = blue
@@ -153,8 +153,7 @@
 ! sub :-$       = blush
 ! sub :-[       = blush
 ! sub :[        = bat
-! sub (a)       = angel
-! sub (h)       = cool
+! sub (a)       = angel ! sub (h)       = cool
 ! sub 8-|       = nerdy
 ! sub |-)       = tired
 ! sub +o(       = ill
@@ -181,8 +180,7 @@
 
 // Set arrays
 ! array malenoun   = 帅哥|male|guys|boy|dude|boi|man|men|gentleman|gentlemen|男 
-! array loving	   = make love|loving|爱性
-! array femalenoun = female girl chick woman women lady babe
+! array femalenoun = 美女|女|female girl chick woman women lady babe
 ! array mennoun    = males guys boys dudes bois men gentlemen
 ! array womennoun  = females girls chicks women ladies babes
 ! array lol        = lol lmao rofl rotfl haha hahaha

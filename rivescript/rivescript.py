@@ -22,8 +22,8 @@ re_objend  = re.compile('<\s*object')
 re_weight  = re.compile('\{weight=(\d+)\}')
 re_inherit = re.compile('\{inherits=(\d+)\}')
 re_wilds   = re.compile('[\s\*\#\_]+')
-#re_nasties = re.compile(ur'[^A-Za-z0-9\u4E00-\u9FA5 ]')
-re_nasties = re.compile(r'[^A-Za-z0-9 ]')
+re_nasties = re.compile(ur'[^A-Za-z0-9\u4E00-\u9FA5 ]')
+#re_nasties = re.compile(r'[^A-Za-z0-9 ]')
 
 # Version of RiveScript we support.
 rs_version = 2.0
@@ -1196,14 +1196,14 @@ the value is unset at the end of the `reply()` method)."""
         self._current_user = user
 
         # updated by jannson
-        if isinstance(msg, str):
-            msg = msg.decode('utf-8')
+        #if isinstance(msg, str):
+        #    msg = msg.decode('utf-8')
         #msg = lang.split_zh(msg)
-        msg = lang.normal_zh(msg)
-        print 'BEGIN'+msg+'END'
+        #msg = lang.normal_zh(msg)
 
         # Format their message.
         msg = self._format_message(msg)
+        print 'BEGIN:'+msg+':END'
 
         reply = ''
 
@@ -1249,6 +1249,9 @@ the value is unset at the end of the `reply()` method)."""
 
         # Lowercase it.
         msg = msg.lower()
+
+        # Normal it updated by jannson
+        msg = lang.normal_zh(msg)
 
         # Run substitutions on it.
         msg = self._substitute(msg, "subs")
@@ -1625,19 +1628,27 @@ the value is unset at the end of the `reply()` method)."""
 
         # Filter in arrays.
         arrays = re.findall(r'\@(.+?)\b', regexp)
+        #print 'DEBUG@( :', regexp,'###',arrays
         for array in arrays:
             rep = ''
             if array in self._arrays:
                 rep = r'(?:' + '|'.join(self._arrays[array]) + ')'
             regexp = re.sub(r'\@' + re.escape(array) + r'\b', rep, regexp)
+            #print 'DEBUG @(:'+r'\@' + re.escape(array) + r'\b###'+rep+'###'+regexp
+            #print 'DEBUG @( :'+array
 
         # Filter in bot variables.
         bvars = re.findall(r'<bot (.+?)>', regexp)
+        # updated by jannson
         for var in bvars:
+            #print 'IN <BOT:', regexp, bvars, 
             rep = ''
             if var in self._bvars:
                 rep = self._strip_nasties(self._bvars[var])
             regexp = re.sub(r'<bot ' + re.escape(var) + r'>', rep, regexp)
+            # lowercase the name's string ?
+            regexp = regexp.lower()
+            #print "RESULT:"+regexp+":ENDRESULT"
 
         # Filter in user variables.
         uvars = re.findall(r'<get (.+?)>', regexp)

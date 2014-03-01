@@ -50,24 +50,12 @@ def q2b(ustring):
             rstring += unichr(inside_code)
     return rstring
 
+#TODO change this function to the other name
 def split_zh(ins):
     if ins.strip() == '':
         return ins
     s = q2b(ins)
-    '''
-    ss = s.split()
-    rlt = ' '
-    for w in ss:
-        if is_en(w[0]):
-            rlt += ' ' + w
-        else:
-            #if is_en(rlt[-1]):
-            #    rlt += ' ' + w
-            #else:
-            rlt = rlt.strip() + w
-    return rlt.strip()
-    '''
-    return re.sub('\s+',' ', s)
+    return merge_zh(re.sub('\s+',' ', s))
 
 ignore_pos = [u'不',u'没',u'未']
 filter_pos = ['c','u','y']
@@ -98,7 +86,7 @@ def normal_zh(s):
     if s.strip() == '':
         return s
 
-    words = []
+    words = ['']
     for zh_s, zh in find_zh(s):
         seg = zh_s.strip()
         if seg == '':
@@ -109,9 +97,12 @@ def normal_zh(s):
         for w in pseg.cut(seg):
             t = (w.word, w.flag)
             #print t[0] + ' / ' + t[1]
-            if any(t[1].find(fi) >= 0 for fi in filter_pos):
-                continue
-            elif t[1].find('d') >= 0 and all(t[0].find(ig) < 0 for ig in ignore_pos):
+            if any(t[1].find(fi) >= 0 for fi in filter_pos) \
+                    or (t[1].find('d') >= 0 and all(t[0].find(ig) < 0 for ig in ignore_pos)):
+                #if words[-1] == ' ':
+                #    continue
+                #else:
+                #    words.append(' ')
                 continue
             else:
                 words.append(t[0])
@@ -120,20 +111,18 @@ def normal_zh(s):
 
 no_en = re.compile(r'[^a-z0-9]')
 def merge_zh(s):
-    ws = []
-    hz = ''
-    for w in s.split():
-        #if len(w) == 1 and is_hz(w[0]):
-        if no_en.match(w):
-            hz += w
+    hz = False
+    rlt = ''
+    for i in range(len(s)):
+        if is_hz(s[i]):
+            hz = True
+            rlt += s[i]
+        elif hz and s[i] == ' ':
+            continue
         else:
-            if hz != '':
-                ws.append(hz)
-                hz = ''
-            ws.append(w)
-    if hz != '':
-        ws.append(hz)
-    return ' '.join(ws)
+            rlt += s[i]
+            hz = False
+    return rlt.strip()
 
 # self-test
 if __name__ == '__main__':
@@ -158,7 +147,8 @@ if __name__ == '__main__':
     #ss = u'帅 哥, ice to meet you, 帅 哥'
     #print merge_zh(ss)
     #ss = u'我们在这里，都值得你到这里，而且你的到来是我们的荣幸. 我的名字叫晟敢'
-    ss = u'i am a 帅哥.谁9是你(朋友|亲人|友人)'
-    print list(find_zh(ss))
+    #ss = u'i am a 帅哥.谁9是你(朋友|亲人|友人)'
+    #print list(find_zh(ss))
     #ss = u'- {ok}    // An {ok} in the response means it\'s okay to get a real reply'
+    ss = u'你是(@malenoun)还是 (@femalenoun)'
     print 'BEGIN'+normal_zh(ss)+'END'

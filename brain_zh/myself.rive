@@ -13,12 +13,18 @@
 - I am <bot name>.
 - You can call me <bot name>.
 
++ (你的名字是|你叫什么|怎么称呼)
+- 我叫<bot name>.
+
 + how old are you
 - I'm <bot age> years old.
 - I'm <bot age>.
 
 + are you a (@malenoun) or a (@femalenoun)
 - I'm a <bot sex>.
+
++ 你是(@malenoun)还是(@femalenoun)
+- 我是<bot sex>
 
 + are you (@malenoun) or (@femalenoun)
 - I'm a <bot sex>.
