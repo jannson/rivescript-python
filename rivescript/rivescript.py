@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
 
 import sys
 import os
@@ -29,10 +30,12 @@ re_nasties = re.compile(ur'[^A-Za-z0-9\u4E00-\u9FA5 ]')
 rs_version = 2.0
 
 def cmd_li(s):
+    i = 0
     for c in s:
         if c != ' ':
-            return c
-    return ''
+            return i
+        i += 1
+    return -1
 
 class RiveScript:
     """A RiveScript interpreter for Python 2 and 3."""
@@ -142,13 +145,15 @@ This may be called as either a class method of a method of a RiveScript object."
 
         fh    = codecs.open(filename, 'r', 'utf-8')
         #lines = fh.readlines()
-        lines = [lang.normal_zh(li) if cmd_li(li) == u'+' else lang.split_zh(li) for li in fh.readlines()]
-        '''
-        # Just test hear
-        for li in [li for li in lines if cmd_li(li) == u'+']:
-            print li + " ",
-        '''
+        lines = []
 
+        for li in fh.readlines():
+            i = cmd_li(li)
+            if li[i] == u'+':
+                lines.append(lang.normal_pos(li))
+            else:
+                #support for python indent
+                lines.append(li[:i] + lang.normal_zh(li))
         fh.close()
 
         self._say("Parsing " + str(len(lines)) + " lines of code from " + filename)
@@ -1195,12 +1200,6 @@ the value is unset at the end of the `reply()` method)."""
         # Store the current user in case an object macro needs it.
         self._current_user = user
 
-        # updated by jannson
-        #if isinstance(msg, str):
-        #    msg = msg.decode('utf-8')
-        #msg = lang.split_zh(msg)
-        #msg = lang.normal_zh(msg)
-
         # Format their message.
         msg = self._format_message(msg)
         print 'BEGIN:'+msg+':END'
@@ -1232,7 +1231,6 @@ the value is unset at the end of the `reply()` method)."""
         self._users[user]['__history__']['reply'] = [reply]
         self._users[user]['__history__']['reply'].extend(oldReply)
         
-        #updated by jannson Now merge the reply
         mreply = lang.merge_zh(reply)
 
         # Unset the current user.
@@ -1251,7 +1249,7 @@ the value is unset at the end of the `reply()` method)."""
         msg = msg.lower()
 
         # Normal it updated by jannson
-        msg = lang.normal_zh(msg)
+        msg = lang.normal_pos(msg)
 
         # Run substitutions on it.
         msg = self._substitute(msg, "subs")
@@ -1397,9 +1395,9 @@ the value is unset at the end of the `reply()` method)."""
                 else:
                     # Non-atomic triggers always need the regexp.
                     #updated by jannson
-                    #print 'DEBUG match: ^' + regexp + r'$'
+                    #print 'DEBUG match: ^' + regexp + r'$', 
                     #print 'matching:', msg
-                    match = re.match(r'^' + regexp + r'$', msg)
+                    match = re.match(r'^' + regexp + r'$', msg, re.U)
                     if match:
                         # The regexp matched!
                         isMatch = True
@@ -1603,7 +1601,8 @@ the value is unset at the end of the `reply()` method)."""
         regexp = re.sub(r'\*', r'(.+?)', regexp)  # Convert * into (.+?)
         regexp = re.sub(r'#', r'(\d+?)', regexp)  # Convert # into (\d+?)
         #updated by gan, change to \w+?
-        regexp = re.sub(r'_', r'([A-Za-z]+?)', regexp)  # Convert _ into (\w+?)
+        # cause MemoryError python bug hear?
+        regexp = re.sub(r'_', r'(\w+?)', regexp)  # Convert _ into (\w+?)
         regexp = re.sub(r'\{weight=\d+\}', '', regexp) # Remove {weight} tags
         regexp = re.sub(r'<zerowidthstar>', r'(.*?)', regexp)
 

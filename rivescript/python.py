@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
 
 # Python3 compat
 from __future__ import print_function
@@ -44,7 +45,8 @@ handler on your RiveScript object:
         source += "self._objects[name] = RSOBJ\n"
 
         try:
-            exec(source)
+            c = compile('# coding=utf-8\n'+source.encode('utf-8'), '', 'exec')
+            exec(c)
             #self._objects[name] = RSOBJ
         except Exception as e:
             print("Failed to load code from object", name)

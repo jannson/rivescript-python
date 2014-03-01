@@ -50,15 +50,14 @@ def q2b(ustring):
             rstring += unichr(inside_code)
     return rstring
 
-#TODO change this function to the other name
-def split_zh(ins):
+def normal_zh(ins):
     if ins.strip() == '':
         return ins
     s = q2b(ins)
-    return merge_zh(re.sub('\s+',' ', s))
+    return merge_zh(s)
 
 ignore_pos = [u'不',u'没',u'未']
-filter_pos = ['c','u','y']
+filter_pos = ['c','u','y', 'z']
 
 def find_zh(s):
     tmp = s[0]
@@ -82,13 +81,14 @@ def find_zh(s):
                 tmp = w
     yield tmp, hz
 
-def normal_zh(s):
-    if s.strip() == '':
-        return s
+def normal_pos(ins):
+    if ins.strip() == '':
+        return ins
+    s = q2b(ins)
 
     words = ['']
-    for zh_s, zh in find_zh(s):
-        seg = zh_s.strip()
+    for seg, zh in find_zh(s):
+        #seg = zh_s.strip()
         if seg == '':
             continue
         if not zh:
@@ -106,49 +106,36 @@ def normal_zh(s):
                 continue
             else:
                 words.append(t[0])
-    #print 'BEGSP', ' '.join(words), 'END'
-    return split_zh(''.join(words))
+    #print 'BEGPOS', ''.join(words), 'END'
+    return merge_zh(s)
 
-no_en = re.compile(r'[^a-z0-9]')
 def merge_zh(s):
-    hz = False
     rlt = ''
-    for i in range(len(s)):
-        if is_hz(s[i]):
-            hz = True
+    i = 0
+    l = len(s)
+    while i < l:
+        if not is_hz(s[i]):
             rlt += s[i]
-        elif hz and s[i] == ' ':
+            i += 1
             continue
-        else:
-            rlt += s[i]
-            hz = False
-    return rlt.strip()
+        rlt += s[i]
+        i += 1
+        is_space = False
+        while i < l and s[i] == ' ':
+            i += 1
+            is_space = True
+        if is_space and i < l and not is_hz(s[i]):
+            rlt += ' '
+    return re.sub('\s+', ' ', rlt.strip())
+
+def test_merge_zh():
+    s = u'然后  出去 工作了 '
+    assert(u'然后出去工作了' == merge_zh(s))
+    s = u'abc  然后 just 出去  test  工作it了 '
+    assert(u'abc 然后 just 出去 test 工作it了' == merge_zh(s))
+    s = u'然后just   test出 去it了'
+    assert(u'然后just test出去it了' == merge_zh(s))
 
 # self-test
 if __name__ == '__main__':
-    samples = [
-                (u'１２３４５６７８９０',u'1234567890'),
-                (u'ａｂｃ１２３４５', u'abc12345'),
-                (u'！＠＃％＾＆＊（）＿＋', u'!@#%^&*()_+'),
-                (u'［］ＡＢＣＤＥＦＧＨＩＪＫ', u'[]ABCDEFGHIJK'),
-                (u'㈠㈡㈢㈣㈤㈥㈦㈧㈨㈩', u'㈠㈡㈢㈣㈤㈥㈦㈧㈨㈩'),
-                (u'你啊，。。', u'你啊,..')
-            ]
-
-    for (key, value) in samples:
-        if q2b(key) == value:
-            print '%s:%s convert ok!' % (key, value)
-        else:
-            print '%s:%s convert failure!' % (key, value)
-    ss = u'_2005年我 们,   出去玩2，_ 然后test  string hear聘情况！知道道理5abc如何走*。这么说不 *'
-    print ss
-    ss = split_zh(ss)
-    print ss
-    #ss = u'帅 哥, ice to meet you, 帅 哥'
-    #print merge_zh(ss)
-    #ss = u'我们在这里，都值得你到这里，而且你的到来是我们的荣幸. 我的名字叫晟敢'
-    #ss = u'i am a 帅哥.谁9是你(朋友|亲人|友人)'
-    #print list(find_zh(ss))
-    #ss = u'- {ok}    // An {ok} in the response means it\'s okay to get a real reply'
-    ss = u'你是(@malenoun)还是 (@femalenoun)'
-    print 'BEGIN'+normal_zh(ss)+'END'
+    test_merge_zh()
