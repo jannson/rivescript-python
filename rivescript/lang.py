@@ -131,8 +131,10 @@ def merge_zh(s):
 def test_merge_zh():
     s = u'然后  出去 工作了 '
     assert(u'然后出去工作了' == merge_zh(s))
+
     s = u'abc  然后 just 出去  test  工作it了 '
     assert(u'abc 然后 just 出去 test 工作it了' == merge_zh(s))
+
     s = u'然后just   test出 去it了'
     assert(u'然后just test出去it了' == merge_zh(s))
 

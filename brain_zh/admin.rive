@@ -7,17 +7,25 @@
 + 关闭{weight=10000}
 - 关闭中... <call>shutdown</call>
 
++ 来个测试
+* <call>rtest</call> == test => 测试正常
+- 测试失败
+
 + botmaster only
 - This command can only be used by my botmaster. <id> != <bot master>
 
 > object shutdown perl
-	my ($rs) = @_;
+    my ($rs) = @_;
 
-	# Shut down.
-	exit(0);
+    # Shut down.
+    exit(0);
 < object
 
 > object shutdown python
-	# Shut down
-	exit(0)
+    # Shut down
+    exit(0)
+< object
+
+> object rtest python
+    return 'test'
 < object
