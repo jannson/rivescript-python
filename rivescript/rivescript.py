@@ -12,6 +12,7 @@ import copy
 import codecs
 from wordsub import WordSub
 import lang
+from thomas import Bayes
 
 from . import __version__
 from . import python
@@ -77,6 +78,9 @@ bool utf8:   Enable UTF-8 support."""
         self._sorted   = {}     # Sorted buffers
         self._syntax   = {}     # Syntax tracking (filenames & line no.'s)
 
+        #updated by jannson
+        self.bayes = Bayes(tokenizer = lang.Tokenizer())
+
         # "Current request" variables.
         self._current_user = None  # The current user ID.
 
@@ -138,7 +142,7 @@ This may be called as either a class method of a method of a RiveScript object."
                     # Load this file.
                     self.load_file(os.path.join(directory, item))
                     break
-    
+
     def load_file(self, filename):
         """Load and parse a RiveScript document."""
         self._say("Loading file: " + filename)
@@ -1200,6 +1204,9 @@ the value is unset at the end of the `reply()` method)."""
         # Store the current user in case an object macro needs it.
         self._current_user = user
 
+        #record it for latter use
+        old_msg = msg
+
         # Format their message.
         msg = self._format_message(msg)
         print 'BEGIN:'+msg+':END'
@@ -1222,6 +1229,16 @@ the value is unset at the end of the `reply()` method)."""
         else:
             # Just continue then.
             reply = self._getreply(user, msg)
+        
+        #updated by jannson
+        print 'REPLY:', reply
+        topicmatching = u'topicmatching'
+        if reply.strip() == topicmatching:
+            guess_topic = self.bayes.guess(lang.normal_zh(old_msg))
+            if len(guess_topic) != 0:
+                reply = self._getreply(user, guess_topic[0][0])
+            if reply == topicmatching:
+                reply = self._getreply(user, 'matchnothing')
 
         # Save their reply history.
         oldInput = self._users[user]['__history__']['input'][:8]
@@ -1230,7 +1247,7 @@ the value is unset at the end of the `reply()` method)."""
         oldReply = self._users[user]['__history__']['reply'][:8]
         self._users[user]['__history__']['reply'] = [reply]
         self._users[user]['__history__']['reply'].extend(oldReply)
-        
+
         mreply = lang.merge_zh(reply)
 
         # Unset the current user.
@@ -1395,7 +1412,7 @@ the value is unset at the end of the `reply()` method)."""
                 else:
                     # Non-atomic triggers always need the regexp.
                     #updated by jannson
-                    #print 'DEBUG match: ^' + regexp + r'$', 
+                    #print 'DEBUG match: ^' + regexp + r'$',
                     #print 'matching:', msg
                     match = re.match(r'^' + regexp + r'$', msg, re.U)
                     if match:
@@ -1560,7 +1577,7 @@ the value is unset at the end of the `reply()` method)."""
             subs = self._subs
         else:
             subs = self._person
-    
+
         '''
         # Make placeholders each time we substitute something.
         ph = []
@@ -1640,7 +1657,7 @@ the value is unset at the end of the `reply()` method)."""
         bvars = re.findall(r'<bot (.+?)>', regexp)
         # updated by jannson
         for var in bvars:
-            #print 'IN <BOT:', regexp, bvars, 
+            #print 'IN <BOT:', regexp, bvars,
             rep = ''
             if var in self._bvars:
                 rep = self._strip_nasties(self._bvars[var])

@@ -80,7 +80,12 @@ def find_zh(s):
                 hz = False
                 tmp = w
     yield tmp, hz
-
+    
+class Tokenizer:
+    def tokenize(self, text):
+        for w in pseg.cut(text):
+            yield w.word
+            
 def normal_pos(ins):
     if ins.strip() == '':
         return ins

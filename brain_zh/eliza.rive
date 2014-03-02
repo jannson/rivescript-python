@@ -1,11 +1,18 @@
 // A generic set of chatting responses. This set mimicks the classic Eliza bot.
 
 + *
+- topicmatching
+
++ matchnothing
 - I'm not sure I understand you fully.
 - Please go on.
 - That is interesting. Please continue.
 - Tell me more about that.
 - Does talking about this bother you?
+
++ music
+- 很喜欢音乐么
+- 音乐非常不错
 
 + [*] (sorry|apologize|apology) [*]
 - Please don't apologize.
