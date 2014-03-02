@@ -97,17 +97,19 @@ def normal_pos(ins):
         for w in pseg.cut(seg):
             t = (w.word, w.flag)
             #print t[0] + ' / ' + t[1]
+            #print any(t[1].find(fi) >= 0 for fi in filter_pos) 
             if any(t[1].find(fi) >= 0 for fi in filter_pos) \
                     or (t[1].find('d') >= 0 and all(t[0].find(ig) < 0 for ig in ignore_pos)):
                 #if words[-1] == ' ':
                 #    continue
                 #else:
                 #    words.append(' ')
+                #print w
                 continue
             else:
                 words.append(t[0])
     #print 'BEGPOS', ''.join(words), 'END'
-    return merge_zh(s)
+    return merge_zh(''.join(words))
 
 def merge_zh(s):
     rlt = ''
@@ -138,6 +140,12 @@ def test_merge_zh():
     s = u'然后just   test出 去it了'
     assert(u'然后just test出去it了' == merge_zh(s))
 
+def test_pos():
+    s = u'是谁呢'
+    #print normal_pos(s)
+    assert(u'是谁'== normal_pos(s))
+
 # self-test
 if __name__ == '__main__':
     test_merge_zh()
+    test_pos()

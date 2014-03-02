@@ -149,7 +149,7 @@ This may be called as either a class method of a method of a RiveScript object."
 
         for li in fh.readlines():
             i = cmd_li(li)
-            if li[i] == u'+':
+            if li[i] == u'+' or li[i] == u'%':
                 lines.append(lang.normal_pos(li))
             else:
                 #support for python indent
