@@ -78,9 +78,6 @@ bool utf8:   Enable UTF-8 support."""
         self._sorted   = {}     # Sorted buffers
         self._syntax   = {}     # Syntax tracking (filenames & line no.'s)
 
-        #updated by jannson
-        self.bayes = Bayes(tokenizer = lang.Tokenizer())
-
         # "Current request" variables.
         self._current_user = None  # The current user ID.
 
@@ -135,6 +132,17 @@ This may be called as either a class method of a method of a RiveScript object."
         if not os.path.isdir(directory):
             self._warn("Error: " + directory + " is not a directory.")
             return
+            
+        # update by jannson
+        # Have to load_directory first
+        self.bayes = Bayes(tokenizer = lang.Tokenizer())
+        self.bayes_name = os.path.join(directory, "bayes.bay")
+        try:
+            self.bayes.load(self.bayes_name)
+        except:
+            self._warn("Alert: Failed to load bayes")
+            self.bayes.save(self.bayes_name)
+            self.bayes.load(self.bayes_name)
 
         for item in os.listdir(directory):
             for extension in ext:
@@ -142,7 +150,19 @@ This may be called as either a class method of a method of a RiveScript object."
                     # Load this file.
                     self.load_file(os.path.join(directory, item))
                     break
-
+        
+    def train_topics(self):
+        for k1,v1 in self._topics.iteritems():
+            if k1 == 'random':
+                continue
+            k1 = k1.strip()
+            for k2,v2 in v1.iteritems():
+                line = k2.strip()
+                if 'reply' in v2:
+                    line += re.sub(r'\W+', ' ', unicode(v2['reply']))
+                self.bayes.train(k1, line)
+        self.bayes.save(self.bayes_name)        
+        
     def load_file(self, filename):
         """Load and parse a RiveScript document."""
         self._say("Loading file: " + filename)
@@ -521,6 +541,7 @@ This may be called as either a class method of a method of a RiveScript object."
                     self._initTT('syntax', topic, line, 'thats')
                     self._syntax['thats'][topic][line]['trigger'] = (fname, lineno)
                 else:
+                    #print "DEBUGTOPIC:"+topic, "---:", line
                     self._initTT('topics', topic, line)
                     self._initTT('syntax', topic, line, 'topic')
                     self._syntax['topic'][topic][line]['trigger'] = (fname, lineno)
@@ -1205,7 +1226,7 @@ the value is unset at the end of the `reply()` method)."""
         self._current_user = user
 
         #record it for latter use
-        old_msg = msg
+        #old_msg = msg
 
         # Format their message.
         msg = self._format_message(msg)
@@ -1231,12 +1252,13 @@ the value is unset at the end of the `reply()` method)."""
             reply = self._getreply(user, msg)
         
         #updated by jannson
-        print 'REPLY:', reply
         topicmatching = u'topicmatching'
         if reply.strip() == topicmatching:
-            guess_topic = self.bayes.guess(lang.normal_zh(old_msg))
-            if len(guess_topic) != 0:
-                reply = self._getreply(user, guess_topic[0][0])
+            guess_msg = re.sub(r'\W', ' ', msg)
+            if guess_msg.strip() != '':
+                guess_topic = self.bayes.guess(guess_msg)
+                if len(guess_topic) != 0:
+                    reply = self._getreply(user, guess_topic[0][0])
             if reply == topicmatching:
                 reply = self._getreply(user, 'matchnothing')
 

@@ -1,16 +1,13 @@
 #!/usr/bin/python
 
-import codecs
-codecs.register(lambda name: codecs.lookup('utf-8') if name == 'cp65001' else None)
-
 from rivescript import RiveScript
 
 #rs = RiveScript(log='log.example', utf8=True)
 rs = RiveScript(debug=False, utf8=True)
-rs.bayes.train(u'music', u'changge tiaowu')
-
 rs.load_directory("./brain_zh")
 rs.sort_replies()
+#rs.train_topics()
+#rs.bayes.train(u'music', u'changge tiaowu')
 
 print """This is a bare minimal example for how to write your own RiveScript bot!
 

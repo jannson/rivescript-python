@@ -84,7 +84,8 @@ def find_zh(s):
 class Tokenizer:
     def tokenize(self, text):
         for w in pseg.cut(text):
-            yield w.word
+            if w.word.strip() != "":
+                yield w.word
             
 def normal_pos(ins):
     if ins.strip() == '':
