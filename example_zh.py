@@ -7,7 +7,9 @@ from rivescript import sentences
 rs = RiveScript(debug=False, utf8=True)
 rs.load_directory("./brain_zh")
 rs.sort_replies()
-rs.train_topics()
+
+#only have to train once
+#rs.train_topics()
 
 print """This is a bare minimal example for how to write your own RiveScript bot!
 
