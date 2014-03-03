@@ -22,14 +22,13 @@ def get_reply():
     line = request.args.get('l','')
 
     user = user.strip()
-    res = []
+    res = ['']
     if user != '':
         for msg in sentences(line):
             if  msg.strip() == '':
                 continue
             reply = rs.reply(user, msg)
             res.append(reply)
-    print res
     return jsonify(result=res)
 
 @app.route('/')
