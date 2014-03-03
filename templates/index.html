@@ -1,9 +1,9 @@
 <!doctype html>
 <html>
-	<head>
-		<title>Just test</title>
-		<meta charset="utf-8"/>
-<script type='text/javascript' src='http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js'>
+<head>
+    <title>与小突聊天</title>
+    <meta charset="utf-8"/>
+<script type='text/javascript' src='http://code.jquery.com/jquery-1.10.2.js'>
 </script>
 </head>
 
@@ -13,26 +13,33 @@ $SCRIPT_ROOT = '/';
 $(function() {
         var submit_form = function(e) {
         $.getJSON($SCRIPT_ROOT+'reply', {
-            u:$('input[name="u"]').val(),
             l:$('input[name="l"]').val()
         }, function(data) {
-            $('#r').html(data.result[0]);
+            for(i = 0; i < data.reply.length; i++) {
+                if(data.reply[0] != '') {
+                s = '你 说：'+data.req[i] + '<br/>';
+                s += '小突说：'+data.reply[i] + '<br/>';
+                $('#r').append(s);
+                }
+            }
         });
         return false;
     };
-    $('a#get_reply').bind('click', submit_form);
+    $('#get_reply').bind('click', submit_form);
+    $(document).keypress(function(e) {
+        if(e.which == 13) {
+            submit_form('');
+        }
+        });
 });
 </script>
-<h1>Test</h1>
+<h1>与小突聊天</h1>
 <p>
-user: <input type='text' name='u' value="user001"/><br/>
-input:<input type='text' name='l' /><br/>
-<p><a href='#' id='get_reply'>get_reply</a></p>
-output:<br/>
-<div id='r'>
-    hello
+你说:<input type='text' name='l' size='60' /><input type='button' id='get_reply' value='发送'/><br/>
+<hr/>
+<b>对话记录：</b>
+<div id='r' style="width:50%">
 </div>
-</p>
 </body>
 </html>
 

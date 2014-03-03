@@ -1,5 +1,6 @@
 #!/usr/bin/python
 
+import re
 from flask import Flask, jsonify, render_template, request
 
 from rivescript import RiveScript
@@ -16,20 +17,20 @@ app = Flask(__name__)
 
 @app.route('/reply')
 def get_reply():
-    user = request.args.get('u','')
+    user = re.sub(ur'\W', '', request.remote_addr)
     line = request.args.get('l','')
 
     user = user.strip()
     res = []
+    req = []
     if user != '':
         for msg in sentences(line):
             if  msg.strip() == '':
                 continue
             reply = rs.reply(user, msg)
+            req.append(msg)
             res.append(reply)
-    if len(res) == 0:
-        res = [' ']
-    return jsonify(result=res)
+    return jsonify(req=req, reply=res)
 
 @app.route('/')
 def index():
