@@ -1231,7 +1231,7 @@ the value is unset at the end of the `reply()` method)."""
         if msg.strip() == '':
             msg = noisematching + " " + old_msg
 
-        print 'BEGIN:'+msg+':END'
+        #print 'BEGIN:'+msg+':END'
 
         reply = ''
 
@@ -1259,7 +1259,7 @@ the value is unset at the end of the `reply()` method)."""
             if guess_msg.strip() != '':
                 guess_topic = self.bayes.guess(guess_msg)
                 if len(guess_topic) != 0:
-                    print 'guessing topic:', guess_topic[0][0]
+                    #print 'guessing topic:', guess_topic[0][0]
                     reply = self._getreply(user, guess_topic[0][0])
             if reply == topicmatching:
                 reply = self._getreply(user, 'matchnothing')

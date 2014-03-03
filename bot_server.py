@@ -16,19 +16,19 @@ app = Flask(__name__)
 
 @app.route('/reply')
 def get_reply():
-    print 'hear'
     user = request.args.get('u','')
-    print user
     line = request.args.get('l','')
 
     user = user.strip()
-    res = ['']
+    res = []
     if user != '':
         for msg in sentences(line):
             if  msg.strip() == '':
                 continue
             reply = rs.reply(user, msg)
             res.append(reply)
+    if len(res) == 0:
+        res = [' ']
     return jsonify(result=res)
 
 @app.route('/')

@@ -15,8 +15,8 @@ $(function() {
         $.getJSON($SCRIPT_ROOT+'reply', {
             u:$('input[name="u"]').val(),
             l:$('input[name="l"]').val()
-			}, function(data) {
-				$('#r').html(data.result[0]);
+        }, function(data) {
+            $('#r').html(data.result[0]);
         });
         return false;
     };
@@ -27,7 +27,9 @@ $(function() {
 <p>
 <input type='text' name='u'/><br/>
 <input type='text' name='l' /><br/>
-<div id = 'r'></div>
+<div id='r'>
+    hello
+</div>
 </p>
 <p><a href='#' id='get_reply'>get_reply</a></p>
 </body>
