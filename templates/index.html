@@ -1,0 +1,36 @@
+<!doctype html>
+<html>
+<head>
+<title>Just test</title>
+<script type='text/javascript' src='http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js'>
+</script>
+</head>
+
+<body>
+<script type='text/javascript'>
+$SCRIPT_ROOT = '/';
+$(function() {
+        var submit_form = function(e) {
+        $.getJSON($SCRIPT_ROOT+'reply', {
+            u:$('input[name="u"]').val(),
+            l:$('input[name="l"]').val()
+        }, function(data) {
+            if (data.result.length > 0) {
+                $('#r').text(data.result[0]);
+            }
+        });
+        return false;
+    };
+    $('a#get_reply').bind('click', submit_form);
+});
+</script>
+<h1>Test</h1>
+<p>
+<input type='text' name='u'/><br/>
+<input type='text' name='l' /><br/>
+<input type='text' id='r'/>
+</p>
+<p><a href='#' id='get_reply'>get_reply</a></p>
+</body>
+</html>
+
