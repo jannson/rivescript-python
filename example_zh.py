@@ -1,13 +1,13 @@
 #!/usr/bin/python
 
 from rivescript import RiveScript
+from rivescript import sentences
 
 #rs = RiveScript(log='log.example', utf8=True)
 rs = RiveScript(debug=False, utf8=True)
 rs.load_directory("./brain_zh")
 rs.sort_replies()
-#rs.train_topics()
-#rs.bayes.train(u'music', u'changge tiaowu')
+rs.train_topics()
 
 print """This is a bare minimal example for how to write your own RiveScript bot!
 
@@ -23,12 +23,13 @@ Type /quit when you're done to exit this example.
 """
 
 while True:
-    msg = raw_input("You> ")
-    if msg == '/quit':
+    s = raw_input("You> ")
+    if s == '/quit':
         quit()
-    #print type(msg.decode('gbk').encode('utf-8'))
-    #print type(msg)
-    reply = rs.reply("localuser", msg)
-    print "Bot>", reply
+    for msg in sentences(s):
+        if  msg.strip() == '':
+            continue
+        reply = rs.reply("localuser", msg)
+        print "Bot>", reply
 
 # vim:expandtab

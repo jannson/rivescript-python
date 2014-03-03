@@ -159,7 +159,7 @@ This may be called as either a class method of a method of a RiveScript object."
             for k2,v2 in v1.iteritems():
                 line = k2.strip()
                 if 'reply' in v2:
-                    line += re.sub(r'\W+', ' ', unicode(v2['reply']))
+                    line += re.sub(r'(?u)\W+', ' ', unicode(v2['reply']), re.U)
                 self.bayes.train(k1, line)
         self.bayes.save(self.bayes_name)        
         
@@ -1225,11 +1225,12 @@ the value is unset at the end of the `reply()` method)."""
         # Store the current user in case an object macro needs it.
         self._current_user = user
 
-        #record it for latter use
-        #old_msg = msg
-
-        # Format their message.
+        noisematching = 'noisematching'
+        old_msg = msg
         msg = self._format_message(msg)
+        if msg.strip() == '':
+            msg = noisematching + " " + old_msg
+
         print 'BEGIN:'+msg+':END'
 
         reply = ''
@@ -1254,10 +1255,11 @@ the value is unset at the end of the `reply()` method)."""
         #updated by jannson
         topicmatching = u'topicmatching'
         if reply.strip() == topicmatching:
-            guess_msg = re.sub(r'\W', ' ', msg)
+            guess_msg = msg
             if guess_msg.strip() != '':
                 guess_topic = self.bayes.guess(guess_msg)
                 if len(guess_topic) != 0:
+                    print 'guessing topic:', guess_topic[0][0]
                     reply = self._getreply(user, guess_topic[0][0])
             if reply == topicmatching:
                 reply = self._getreply(user, 'matchnothing')

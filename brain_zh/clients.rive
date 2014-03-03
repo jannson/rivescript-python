@@ -6,9 +6,9 @@
 + * strong
 - <person> strong !
 
-+ 我名字叫*
-- <set name=<formal>>Nice to meet you, <get name>.
-- <set name=<formal>><get name>, nice to meet you.
++ 我[名字]叫*
+- <set name=<formal>>很高兴认识你, <get name>.
+- <set name=<formal>><get name>, 你好啊.
 
 + 无敌战士
 - 确实无敌

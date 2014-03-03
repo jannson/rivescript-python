@@ -30,7 +30,7 @@ def is_en(c):
     return any(ord(s) <= ord(c) <= ord(e) for s, e in r)
 
 def q2b(ustring):
-    rstring = ""
+    rstring = u""
     for uchar in ustring:
         inside_code = ord(uchar)
         # 全角字符unicode编码从65281~65374 （十六进制 0xFF01 ~ 0xFF5E）
@@ -50,10 +50,40 @@ def q2b(ustring):
             rstring += unichr(inside_code)
     return rstring
 
+def sentences(s):
+    if isinstance(s, str):
+        s = s.decode('utf-8')
+    s = q2b(s)
+
+    pos = 0
+    sentenceList = []
+    l = len(s)
+    while pos < l:
+        try: p = s.index('.', pos)
+        except: p = l+1
+        try: q = s.index('?', pos)
+        except: q = l+1
+        try: e = s.index('!', pos)
+        except: e = l+1
+        try: f = s.index('~', pos)
+        except: f = l+1
+        end = min(p,q,e,f)
+        sentenceList.append( s[pos:end].strip() )
+        pos = end+1
+    # If no sentences were found, return a one-item list containing
+    # the entire input string.
+    if len(sentenceList) == 0: sentenceList.append(s)
+    sens = []
+    for ins in sentenceList:
+        s = re.sub(ur'(?u)\W+', ' ', ins, re.U)
+        sens.append(s)
+    return sens
+
 def normal_zh(ins):
     if ins.strip() == '':
         return ins
-    s = q2b(ins)
+    #s = q2b(ins)
+    s = ins
     return merge_zh(s)
 
 ignore_pos = [u'不',u'没',u'未']
@@ -90,7 +120,8 @@ class Tokenizer:
 def normal_pos(ins):
     if ins.strip() == '':
         return ins
-    s = q2b(ins)
+    #s = q2b(ins)
+    s = ins
 
     words = ['']
     for seg, zh in find_zh(s):
@@ -147,11 +178,19 @@ def test_merge_zh():
     assert(u'然后just test出去it了' == merge_zh(s))
 
 def test_pos():
-    s = u'是谁呢'
-    #print normal_pos(s)
+    print normal_pos(s)
     assert(u'是谁'== normal_pos(s))
+
+def test_sens():
+    sents = sentences("First.  Second, still?  Third and Final!  Well, not really")
+    print sents
+    sents = sentences(u'_2005年我们出去玩2，_ 然后聘情况！知道道理5abc如何走*。这么说不 *')
+    for s in sents:
+        print s, ' / ',
 
 # self-test
 if __name__ == '__main__':
     test_merge_zh()
     test_pos()
+    test_sens()
+

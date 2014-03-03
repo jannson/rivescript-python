@@ -19,3 +19,4 @@ __all__      = ['rivescript']
 __version__  = '1.05'
 
 from .rivescript import RiveScript
+from .lang import sentences
