@@ -53,11 +53,16 @@
 % 你叫*
 - 哦，这样啊
 
++ 我叫什么[名字]
+* <get name> == undefined => 还没有告诉我你的名字
+- 你不是<get name>吗？
+- 你叫<get name>是不是？
+
 + i (am from|live in) *
 - <set location={formal}<star2>{/formal}>I've spoken to people from <get location> before.
 
 + 我(家|住)在*
-- <set location={formal}><star1>{/formal}>与我聊天的好多人都在<get location>.
+- <set location={formal}><star>{/formal}>与我聊天的好多人都在<get location>.
 
 + 我在*
 - <set location={formal}><star1>{/formal}>有不少人在<get location>.
@@ -109,7 +114,7 @@
 - 起早贪黑的才起了这个好名字吧
 
 + *
-% 他很漂亮吧
+% 她很漂亮吧
 - 你老婆必须得漂亮！
 
 

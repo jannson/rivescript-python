@@ -44,7 +44,7 @@ def q2b(ustring):
             inside_code = 0x2e
         else:
             inside_code -= 0xfee0
-        if inside_code < 0x0020 or inside_code > 0x7e:      
+        if inside_code < 0x0020 or inside_code > 0x7e:
             rstring += uchar
         else:
             rstring += unichr(inside_code)
@@ -87,7 +87,7 @@ def normal_zh(ins):
     return merge_zh(s)
 
 ignore_pos = [u'不',u'没',u'未']
-filter_pos = ['c','u','y', 'z','x']
+filter_pos = ['c','u','y','z']
 
 def find_zh(s):
     tmp = s[0]
@@ -110,13 +110,14 @@ def find_zh(s):
                 hz = False
                 tmp = w
     yield tmp, hz
-    
+
+filter_pos2 = ['c','u','y','z','r','x','m']
 class Tokenizer:
     def tokenize(self, text):
         for w in pseg.cut(text):
-            if not any(w.flag.find(fi) >= 0 for fi in filter_pos):
+            if w.word.strip() != '' and not any(w.flag.find(fi) >= 0 for fi in filter_pos2):
                 yield w.word.lower()
-            
+
 def normal_pos(ins):
     if ins.strip() == '':
         return ins
@@ -134,7 +135,7 @@ def normal_pos(ins):
         for w in pseg.cut(seg):
             t = (w.word, w.flag)
             #print t[0] + ' / ' + t[1]
-            #print any(t[1].find(fi) >= 0 for fi in filter_pos) 
+            #print any(t[1].find(fi) >= 0 for fi in filter_pos)
             if any(t[1].find(fi) >= 0 for fi in filter_pos) \
                     or (t[1].find('d') >= 0 and all(t[0].find(ig) < 0 for ig in ignore_pos)):
                 #if words[-1] == ' ':
@@ -178,8 +179,10 @@ def test_merge_zh():
     assert(u'然后just test出去it了' == merge_zh(s))
 
 def test_pos():
-    print normal_pos(s)
+    s = u'是谁呢'
     assert(u'是谁'== normal_pos(s))
+    s = '_2005年我们出去玩2，_ 然后聘情况！知道道理5abc如何走*。这么说不 *'
+    print list(pseg.cut(s))
 
 def test_sens():
     sents = sentences("First.  Second, still?  Third and Final!  Well, not really")

@@ -189,7 +189,9 @@ class Bayes(object):
         in pool. uid is optional and may be used to uniquely
         identify the item that is being trained on.
         """
-        tokens = self.getTokens(item)
+        tokens = list(self.getTokens(item))
+        if len(tokens) <= 0:
+            return
         pool = self.pools.setdefault(pool, self.dataClass(pool))
         self._train(pool, tokens)
         self.corpus.trainCount += 1
