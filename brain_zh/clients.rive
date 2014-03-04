@@ -1,20 +1,12 @@
 // Learn stuff about our users.
 
-+ *是接班人
-- <person> 才是!
-
-+ * strong
-- <person> strong !
-
 + 我[名字]叫*
 - <set name=<formal>>很高兴认识你, <get name>.
 - <set name=<formal>><get name>, 你好啊.
 
-+ 无敌战士
-- 确实无敌
-
-+ _很无敌
-@ 无敌战士
++ 叫我*
+- <set name=<formal>>很高兴认识你, <get name>.
+- <set name=<formal>><get name>, 你好!
 
 + my name is <bot master>
 - <set name=<bot master>>That's my master's name too.
@@ -30,17 +22,45 @@
 - <set age=<star>>A lot of people are <get age>, you're not alone.
 - <set age=<star>>Cool, I'm <bot age> myself.{weight=49}
 
++ 我有#岁了
+- 原来你<set age=<star>>岁了啊
+- 酷! 我自己有<bot age>岁.
+
 + i am a (@malenoun)
 - <set sex=帅哥>Alright, you're a <star>.
 
-+ 我是一个(@malenoun)
-- <set sex=帅哥>知道你是<star>了.
++ 我是一个(@malezh)
+- <set sex=帅哥>知道你是<位帅哥了.
+
++ 我是(@malezh)
+- <set sex=帅哥>原来是个帅哥.
+
++ 我是(@femalezh)
+- <set sex=美女>原来是个美女，久仰久仰
+- <set sex=美女>美女你来啦
 
 + i am a (@femalenoun)
-- <set sex=female>Alright, you're female.
+- <set sex=美女>Alright, 你是美女.
+
++ 我是*
+- 你叫<star>?
+
++ 是[*]
+% 你叫*
+- 说我叫什么，比较容易让我听懂
+
++ *
+% 你叫*
+- 哦，这样啊
 
 + i (am from|live in) *
 - <set location={formal}<star2>{/formal}>I've spoken to people from <get location> before.
+
++ 我(家|住)在*
+- <set location={formal}><star1>{/formal}>与我聊天的好多人都在<get location>.
+
++ 我在*
+- <set location={formal}><star1>{/formal}>有不少人在<get location>.
 
 + my favorite * is *
 - <set fav<star1>=<star2>>Why is it your favorite?
@@ -65,23 +85,42 @@
 + my (girlfriend|boyfriend)* name is *
 - <set spouse=<formal>>That's a nice name.
 
++ 我单身
+- <set status=single>还单身着啊，原你马上有对象
+
++ 我有[一个](@bfriendzh)
+- <set status=老公>他叫什么名字？
+- <set status=老公>他很帅吧？
+
++ 我有[一个](@gfriendzh)
+- <set status=老婆>她叫什么名字？
+- <set status=老婆>她很漂亮吧？
+
++ *
+% 他叫什么名字？
+- 是个好名字
+
++ *
+% 他很帅吧
+- 你的老公肯定很帅
+
++ *
+% 她叫什么名字
+- 起早贪黑的才起了这个好名字吧
+
++ *
+% 他很漂亮吧
+- 你老婆必须得漂亮！
+
+
 + (what is my name|who am i|do you know my name|do you know who i am){weight=10}
 - Your name is <get name>.
 - You told me your name is <get name>.
 - Aren't you <get name>?
 
-+ 谁是你的(朋友|亲人|友人)
-- 你说的很可以
-
 + (how old am i|do you know how old i am|do you know my age){weight=10}
 - You are <get age> years old.
 - You're <get age>.
-
-+ 我有#岁了
-- 很多人都有<star>岁了
-
-+ 我有*岁了
-- 能告诉我一个数字么？
 
 + am i a (@malenoun) or a (@femalenoun){weight=10}
 - You're a <get sex>.
@@ -94,3 +133,9 @@
 
 + who is my (boyfriend|girlfriend|spouse){weight=10}
 - <get spouse>
+
++ 你知道我名字[*]
+- 你叫<get name>
+
++ 我是(@malezh)还是美女(@femailezh)
+- 你是<get sex>

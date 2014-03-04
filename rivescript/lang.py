@@ -87,7 +87,7 @@ def normal_zh(ins):
     return merge_zh(s)
 
 ignore_pos = [u'不',u'没',u'未']
-filter_pos = ['c','u','y', 'z']
+filter_pos = ['c','u','y', 'z','x']
 
 def find_zh(s):
     tmp = s[0]
@@ -114,8 +114,8 @@ def find_zh(s):
 class Tokenizer:
     def tokenize(self, text):
         for w in pseg.cut(text):
-            if w.word.strip() != "":
-                yield w.word
+            if not any(w.flag.find(fi) >= 0 for fi in filter_pos):
+                yield w.word.lower()
             
 def normal_pos(ins):
     if ins.strip() == '':

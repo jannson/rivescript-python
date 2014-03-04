@@ -11,7 +11,7 @@ rs.load_directory("./brain_zh")
 rs.sort_replies()
 
 # Only have to train once
-#rs.train_topics()
+rs.train_topics()
 
 app = Flask(__name__)
 

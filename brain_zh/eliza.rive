@@ -1,22 +1,5 @@
 // A generic set of chatting responses. This set mimicks the classic Eliza bot.
 
-+ *
-- topicmatching
-
-+ matchnothing
-- 我没有完全理解你的问题
-- Please go on.
-- 很有意思，继续
-- 说更多些信息
-- 说这些话没关系吧
-
-+ noisematching *
-- 哦
-- 哈哈
-- 嘿嘿
-- 恩？
-- <star>
-
 + music
 - 很喜欢音乐么
 - 音乐非常不错
@@ -88,9 +71,9 @@
 - Don't you know?
 - How likely, would you estimate?
 
-+ (hello|hi|hey|howdy|hola|hai|yo|你好) [*]
++ (hello|hi|hey|howdy|hola|hai|yo|你好)[*]
 - 你好. 有什么要帮忙的么
-- Hi
+- Hi!
 
 + [*] computer [*]
 - Do computers worry you?

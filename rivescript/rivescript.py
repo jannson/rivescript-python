@@ -26,6 +26,7 @@ re_inherit = re.compile('\{inherits=(\d+)\}')
 re_wilds   = re.compile('[\s\*\#\_]+')
 re_nasties = re.compile(ur'[^A-Za-z0-9\u4E00-\u9FA5 ]')
 #re_nasties = re.compile(r'[^A-Za-z0-9 ]')
+re_quote    = re.compile(r'[#@<{(\[]+(.*)[>)}\]]', re.U)
 
 # Version of RiveScript we support.
 rs_version = 2.0
@@ -138,7 +139,7 @@ This may be called as either a class method of a method of a RiveScript object."
         self.bayes = Bayes(tokenizer = lang.Tokenizer())
         self.bayes_name = os.path.join(directory, "bayes.bay")
         try:
-            self.bayes.load(self.bayes_name)
+            pass    #self.bayes.load(self.bayes_name)
         except:
             self._warn("Alert: Failed to load bayes")
             self.bayes.save(self.bayes_name)
@@ -153,15 +154,20 @@ This may be called as either a class method of a method of a RiveScript object."
         
     def train_topics(self):
         for k1,v1 in self._topics.iteritems():
-            if k1 == 'random':
-                continue
             k1 = k1.strip()
             for k2,v2 in v1.iteritems():
                 line = k2.strip()
-                if 'reply' in v2:
-                    line += re.sub(r'(?u)\W+', ' ', unicode(v2['reply']), re.U)
-                self.bayes.train(k1, line)
-        self.bayes.save(self.bayes_name)        
+                if not k2.startswith('matching') and self._is_atomic(k2) and 'reply' in v2:
+                    key = re_quote.sub(' ', k2)
+                    '''
+                    line = key
+                    for i,l in v2['reply'].iteritems():
+                        if isinstance(i, int):
+                            line += u' ' + re_quote.sub(' ', l)
+                    #print key, line
+                    '''
+                    self.bayes.train(key, line)
+        self.bayes.save(self.bayes_name)   
         
     def load_file(self, filename):
         """Load and parse a RiveScript document."""
@@ -1225,11 +1231,11 @@ the value is unset at the end of the `reply()` method)."""
         # Store the current user in case an object macro needs it.
         self._current_user = user
 
-        noisematching = 'noisematching'
+        matchingnoise = 'matchingnoise'
         old_msg = msg
         msg = self._format_message(msg)
         if msg.strip() == '':
-            msg = noisematching + " " + old_msg
+            msg = matchingnoise + " " + old_msg
 
         #print 'BEGIN:'+msg+':END'
 
@@ -1253,16 +1259,16 @@ the value is unset at the end of the `reply()` method)."""
             reply = self._getreply(user, msg)
         
         #updated by jannson
-        topicmatching = u'topicmatching'
-        if reply.strip() == topicmatching:
+        matchingtopic = u'matchingtopic'
+        if reply.strip() == matchingtopic:
             guess_msg = msg
             if guess_msg.strip() != '':
                 guess_topic = self.bayes.guess(guess_msg)
                 if len(guess_topic) != 0:
-                    #print 'guessing topic:', guess_topic[0][0]
+                    print 'guessing topic:', guess_topic[0][0]
                     reply = self._getreply(user, guess_topic[0][0])
-            if reply == topicmatching:
-                reply = self._getreply(user, 'matchnothing')
+            if reply == matchingtopic:
+                reply = self._getreply(user, 'matchingnothing')
 
         # Save their reply history.
         oldInput = self._users[user]['__history__']['input'][:8]
@@ -1641,7 +1647,7 @@ the value is unset at the end of the `reply()` method)."""
         # Simple replacements.
         regexp = re.sub(r'\*', r'(.+?)', regexp)  # Convert * into (.+?)
         regexp = re.sub(r'#', r'(\d+?)', regexp)  # Convert # into (\d+?)
-        #updated by gan, change to \w+?
+        #updated by jannson, change to \w+?
         # cause MemoryError python bug hear?
         regexp = re.sub(r'_', r'(\w+?)', regexp)  # Convert _ into (\w+?)
         regexp = re.sub(r'\{weight=\d+\}', '', regexp) # Remove {weight} tags

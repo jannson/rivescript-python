@@ -6,6 +6,10 @@
 + <bot name> *
 - Yes? {@<star>}
 
++ <bot name>*
+- 需要我帮什么么？
+- 有什么可以帮到你？
+
 + asl
 - <bot age>/<bot sex>/<bot location>
 
@@ -16,6 +20,9 @@
 + (你的名字是|你叫什么|怎么称呼)
 - 我叫<bot name>.
 
++ *久仰[*]
+- 久仰久仰
+
 + how old are you
 - I'm <bot age> years old.
 - I'm <bot age>.
@@ -24,6 +31,9 @@
 - I'm a <bot sex>.
 
 + 你是(@malenoun)还是(@femalenoun)
+- 我是<bot sex>
+
++ 你是(@femalenoun)还是(@malenoun)
 - 我是<bot sex>
 
 + are you (@malenoun) or (@femalenoun)
@@ -65,3 +75,33 @@
 
 + who is your master
 - <bot master>.
+
++ 你[*]在哪里
+- 我现在住在<get location>，有空过来爬个山哇？
+
++ 有(@gfriendzh)*
+- 我有女朋友
+
++ 有(@bfriendzh)*
+- 我是帅哥，已经有女朋友啦
+
++ (你多大|你几岁)
+- 我有<bot age)了.
+
++ (你干什么工作|你干什么的|你做什么)
+- 我的工作就是与别人聊天，介绍我们的俱乐部
+
++ 你(喜欢什么|有什么喜欢)
+- 我喜欢读书，户外。欢迎过来一起。
+
++ 你(可爱|幽默|聪明|帅气|好有意思)
+- 你真会夸人
+- 谢谢
+- 嘻嘻
+
++ 你(笨|蠢|愚蠢)
+- 有人把我的智商拉低了啊
+
++ 你*
+- 更相关我的信息访问这个网站<a href='http://www.toway.me'>突围俱乐部</a>
+- 要不要来<a target='_blank' href='http://www.toway.me'>突围俱乐部</a>了解更多。

@@ -18,8 +18,9 @@ $(function() {
             for(i = 0; i < data.reply.length; i++) {
                 if(data.reply[0] != '') {
                 s = '你 说：'+data.req[i] + '<br/>';
-                s += '小突说：'+data.reply[i] + '<br/>';
+                s += '小突说：'+data.reply[i] + '<br/><br/>';
                 $('#r').append(s);
+                $('input[name="l"]').val("");
                 }
             }
         });
