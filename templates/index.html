@@ -19,7 +19,7 @@ $(function() {
                 if(data.reply[0] != '') {
                 s = '你 说：'+data.req[i] + '<br/>';
                 s += '小突说：'+data.reply[i] + '<br/><br/>';
-                $('#r').append(s);
+                $('#r').prepend(s);
                 $('input[name="l"]').val("");
                 }
             }
