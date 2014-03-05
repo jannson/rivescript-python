@@ -1,7 +1,6 @@
 // Learn stuff about our users.
 
 + matchingname
-- 你叫什么名字
 - 怎么称呼你
 
 + matchinglocation
@@ -17,6 +16,20 @@
 - 马年有对象了吗
 
 + 我[名字]叫*
+% 怎么称呼你
+- <set name=<formal>>很高兴认识你, <get name>.
+- <set name=<formal>><get name>, 你好啊.
+
++ 叫我*
+% 怎么称呼你
+- <set name=<formal>>很高兴认识你, <get name>.
+- <set name=<formal>><get name>, 你好啊.
+
++ *
+% 怎么称呼你
+- <set name=<formal>>好，知道你叫<get name>了
+
++ 我[名字]叫*
 - <set name=<formal>>很高兴认识你, <get name>.
 - <set name=<formal>><get name>, 你好啊.
 
@@ -24,29 +37,61 @@
 - <set name=<formal>>很高兴认识你, <get name>.
 - <set name=<formal>><get name>, 你好!
 
-+ my name is <bot master>
-- <set name=<bot master>>That's my master's name too.
++ 我是*
+- 你叫<star>?
 
-+ my name is <bot name>
-- <set name=<bot name>>What a coincidence! That's my name too!
-- <set name=<bot name>>That's my name too!
++ 是[*]
+% 你叫*
+- 说"我叫什么"，比较容易让我听懂
 
-+ call me *
-- <set name=<formal>><get name>, I will call you that from now on.
++ *
+% 你叫*
+- 哦，这样啊
 
-+ i am * years old
-- <set age=<star>>A lot of people are <get age>, you're not alone.
-- <set age=<star>>Cool, I'm <bot age> myself.{weight=49}
++ 我(家|住)在*
+% 你住在哪里
+- <set location=<star>>与我聊天的好多人都在<get location>.
 
-+ 我有#岁了
-- 原来你<set age=<star>>岁了啊
-- 酷! 我自己有<bot age>岁.
++ 我在*
+% 你住在哪里
+- <set location=<star>>有不少人在<get location>.
 
-+ i am a (@malenoun)
-- <set sex=帅哥>Alright, you're a <star>.
++ *
+% 你住在哪里
+- <set location=<star>>恩，你住在<get location>.
+
++ 我(家|住)在*
+- <set location={formal}><star>{/formal}>与我聊天的好多人都在<get location>.
+
++ 我在*
+- <set location={formal}><star>{/formal}>有不少人在<get location>.
+
++ 我[有]*岁了
+% 你多大
+- <set age=<star>>原来你<get age>岁了啊
+- <set age=<star>>酷! 我自己有<bot age>岁.
+
++ [有]#岁
+% 你多大
+- <set age=<star>>原来你<get age>岁了啊
+- <set age=<star>>酷! 我自己有<bot age>岁.
+
++ #
+% 你多大
+- <set age=<star>>原来你<get age>岁了啊
+- <set age=<star>>酷! 我自己有<bot age>岁.
+
++ (@malezh)
+% 你是帅哥还是美女
+- <set sex=帅哥>原来是位帅哥
+
++ (@femalezh)
+% 你是帅哥还是美女
+- <set sex=美女>原来是个美女，久仰久仰
+- <set sex=美女>美女，你真漂亮
 
 + 我是一个(@malezh)
-- <set sex=帅哥>知道你是<位帅哥了.
+- <set sex=帅哥>知道你是位帅哥了.
 
 + 我是(@malezh)
 - <set sex=帅哥>原来是个帅哥.
@@ -55,59 +100,50 @@
 - <set sex=美女>原来是个美女，久仰久仰
 - <set sex=美女>美女你来啦
 
-+ i am a (@femalenoun)
-- <set sex=美女>Alright, 你是美女.
++ [我]有*
+% 马年有对象了吗
+- 有了对象真幸福
+- 马年必须有对象嘛
+- 赶快发请帖，哈哈
 
-+ 我是*
-- 你叫<star>?
++ [我]没有*
+% 马年有对象了吗
+- <set status=单身>快来我们群里相亲一个
+- <set status=单身>多参加活动，马年马上就有一个
 
-+ 是[*]
-% 你叫*
-- 说我叫什么，比较容易让我听懂
++ 我单身
+- <set status=单身>还单身着啊，原你马上有对象
 
-+ *
-% 你叫*
-- 哦，这样啊
++ *单身*
+% 马年有对象了吗
+- <set status=单身>快来我们群里相亲一个
+- <set status=单身>多参加活动，马年马上就有一个
+
++ 你知道我名字
+- 你叫<get name>
 
 + 我叫什么[名字]
 * <get name> == undefined => 还没有告诉我你的名字
 - 你不是<get name>吗？
 - 你叫<get name>是不是？
 
-+ i (am from|live in) *
-- <set location={formal}<star2>{/formal}>I've spoken to people from <get location> before.
++ 我住哪里
+* <get location> == undefined => 你都没告诉我
+- 你住在<get location>嘛
+- 住在<get location>. 我认识有人住的离你很近
 
-+ 我(家|住)在*
-- <set location={formal}><star>{/formal}>与我聊天的好多人都在<get location>.
++ 我多大了
+* <get age> == undefined => 你没告诉我
+- <get age>. 我能不知道么
+- <get age>. 早知道了
 
-+ 我在*
-- <set location={formal}><star1>{/formal}>有不少人在<get location>.
++ 我是(@malezh)还是(@femailezh)
+* <get sex> == undefined => 还木有知道你的性别
+- 是个大<get sex>.
 
-+ my favorite * is *
-- <set fav<star1>=<star2>>Why is it your favorite?
-
-+ i am single
-- <set status=单身><set spouse=nobody>I am too.
-
-+ i have a girlfriend
-- <set status=老婆>What's her name?
-
-+ i have a boyfriend
-- <set status=老公>What's his name?
-
-+ *
-% whats her name
-- <set spouse=<formal>>That's a pretty name.
-
-+ *
-% whats his name
-- <set spouse=<formal>>That's a cool name.
-
-+ my (girlfriend|boyfriend)* name is *
-- <set spouse=<formal>>That's a nice name.
-
-+ 我单身
-- <set status=单身>还单身着啊，原你马上有对象
++ 我是(@femailezh)还是(@malezh)
+* <get sex> == undefined => 还木有知道你的性别
+- 你是个大<get sex>.
 
 + 我有[一个](@bfriendzh)
 - <set status=老公>他叫什么名字？
@@ -133,6 +169,76 @@
 % 她很漂亮吧
 - 你老婆必须得漂亮！
 
+//Matching else
+
++ 知道我是*{weight=100}
+- 讲给我听听
+- 告诉我听听
+- 还不了解，告诉我呗
+
++ 知道*是*{weight=50}
+- <person>是什么
+- 你来告诉我<person>是什么
+
++ 知道*
+- <person>是什么
+- 你来告诉我<person>是什么
+
++ 我有*
+- 说来听听
+- 很好奇的想听一听
+
++ *
+% 说来听听
+% 很好奇的想听一听
+- 恩，不错
+- 很可以
+- 有意思
+
++ (@okzh)
+- 恩
+- 真好
+- 那就这样
+
++ my name is <bot master>
+- <set name=<bot master>>That's my master's name too.
+
++ my name is <bot name>
+- <set name=<bot name>>What a coincidence! That's my name too!
+- <set name=<bot name>>That's my name too!
+
++ call me *
+- <set name=<formal>><get name>, I will call you that from now on.
+
++ i am * years old
+- <set age=<star>>A lot of people are <get age>, you're not alone.
+- <set age=<star>>Cool, I'm <bot age> myself.{weight=49}
+
++ i (am from|live in) *
+- <set location={formal}<star2>{/formal}>I've spoken to people from <get location> before.
+
++ my favorite * is *
+- <set fav<star1>=<star2>>Why is it your favorite?
+
++ i am single
+- <set status=单身><set spouse=nobody>I am too.
+
++ i have a girlfriend
+- <set status=老婆>What's her name?
+
++ i have a boyfriend
+- <set status=老公>What's his name?
+
++ *
+% whats her name
+- <set spouse=<formal>>That's a pretty name.
+
++ *
+% whats his name
+- <set spouse=<formal>>That's a cool name.
+
++ my (girlfriend|boyfriend)* name is *
+- <set spouse=<formal>>That's a nice name.
 
 + (what is my name|who am i|do you know my name|do you know who i am){weight=10}
 - Your name is <get name>.
@@ -155,13 +261,8 @@
 + who is my (boyfriend|girlfriend|spouse){weight=10}
 - <get spouse>
 
-+ 你知道我名字[*]
-- 你叫<get name>
++ i am a (@malenoun)
+- <set sex=帅哥>Alright, you're a <star>.
 
-+ 我是(@malezh)还是美女(@femailezh)
-- 你是<get sex>
-
-+ (@okzh)
-- 恩
-- 真好
-- 那就这样
++ i am a (@femalenoun)
+- <set sex=美女>Alright, 你是美女.

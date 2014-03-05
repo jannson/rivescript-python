@@ -196,7 +196,7 @@
     # This function demonstrates using rs.current_user() to get
     # the current user ID, to set a variable for them.
     uid   = rs.current_user()
-    asks = [u'name',u'age',u'location',u'sex',u'status']
+    asks = [u'name',u'age',u'location',u'sex',u'status',u'nothingtwo']
     random.shuffle(asks)
     rlt = 'undefined'
     for ask in asks:
@@ -204,7 +204,7 @@
             rlt = u'matching'+ask
             rs._users[uid]['ask'] = rlt
             break
-    print(rlt)
+    #print(rlt)
     return rlt
 < object
 
@@ -212,7 +212,9 @@
 - matchingtopic
 
 + matchingnothing
-* <call>asksent</call> != undefined => {@ <get ask>}
+@ <call>asksent</call>
+
++ matchingnothingtwo
 - 不大理解
 - 你说什么呢
 - 很有意思，继续
