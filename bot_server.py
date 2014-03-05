@@ -9,9 +9,7 @@ from rivescript import sentences
 rs = RiveScript(debug=False, utf8=True)
 rs.load_directory("./brain_zh")
 rs.sort_replies()
-
-# Only have to train once
-rs.train_topics()
+rs.train()
 
 app = Flask(__name__)
 

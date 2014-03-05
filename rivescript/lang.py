@@ -112,11 +112,15 @@ def find_zh(s):
     yield tmp, hz
 
 filter_pos2 = ['c','u','y','z','r','x','m']
+def tokenizezh(text):
+    for w in pseg.cut(text):
+        if w.word.strip() != '' and not any(w.flag.find(fi) >= 0 for fi in filter_pos2):
+            yield w.word.lower()
+
 class Tokenizer:
     def tokenize(self, text):
-        for w in pseg.cut(text):
-            if w.word.strip() != '' and not any(w.flag.find(fi) >= 0 for fi in filter_pos2):
-                yield w.word.lower()
+        for w in tokenizezh(text):
+            yield w
 
 def normal_pos(ins):
     if ins.strip() == '':
