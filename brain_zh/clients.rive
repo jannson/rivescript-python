@@ -1,5 +1,21 @@
 // Learn stuff about our users.
 
++ matchingname
+- 你叫什么名字
+- 怎么称呼你
+
++ matchinglocation
+- 你住在哪里
+
++ matchingage
+- 你多大了
+
++ matchingsex
+- 你是帅哥还是美女
+
++ matchingstatus
+- 马年有对象了吗
+
 + 我[名字]叫*
 - <set name=<formal>>很高兴认识你, <get name>.
 - <set name=<formal>><get name>, 你好啊.
@@ -71,13 +87,13 @@
 - <set fav<star1>=<star2>>Why is it your favorite?
 
 + i am single
-- <set status=single><set spouse=nobody>I am too.
+- <set status=单身><set spouse=nobody>I am too.
 
 + i have a girlfriend
-- <set status=girlfriend>What's her name?
+- <set status=老婆>What's her name?
 
 + i have a boyfriend
-- <set status=boyfriend>What's his name?
+- <set status=老公>What's his name?
 
 + *
 % whats her name
@@ -91,7 +107,7 @@
 - <set spouse=<formal>>That's a nice name.
 
 + 我单身
-- <set status=single>还单身着啊，原你马上有对象
+- <set status=单身>还单身着啊，原你马上有对象
 
 + 我有[一个](@bfriendzh)
 - <set status=老公>他叫什么名字？
@@ -103,7 +119,7 @@
 
 + *
 % 他叫什么名字？
-- 是个好名字
+- <star>是个好名字
 
 + *
 % 他很帅吧
@@ -144,3 +160,8 @@
 
 + 我是(@malezh)还是美女(@femailezh)
 - 你是<get sex>
+
++ (@okzh)
+- 恩
+- 真好
+- 那就这样

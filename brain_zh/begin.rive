@@ -189,11 +189,30 @@
 ! array colorzh     = 红|橙|黄|绿|青|蓝|紫
 ! array gfriendzh   = 老婆|女朋友|女友
 ! array bfriendzh   = 男朋友|男友|老公
+! array okzh        = 恩|好|行|成
+
+> object asksent python
+    import random
+    # This function demonstrates using rs.current_user() to get
+    # the current user ID, to set a variable for them.
+    uid   = rs.current_user()
+    asks = [u'name',u'age',u'location',u'sex',u'status']
+    random.shuffle(asks)
+    rlt = 'undefined'
+    for ask in asks:
+        if ask not in rs._users[uid]:
+            rlt = u'matching'+ask
+            rs._users[uid]['ask'] = rlt
+            break
+    print(rlt)
+    return rlt
+< object
 
 + *
 - matchingtopic
 
 + matchingnothing
+* <call>asksent</call> != undefined => {@ <get ask>}
 - 不大理解
 - 你说什么呢
 - 很有意思，继续

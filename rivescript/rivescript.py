@@ -1282,7 +1282,7 @@ the value is unset at the end of the `reply()` method)."""
             guess_msg = msg
             if guess_msg.strip() != '':
                 guess_topic = self.guess(guess_msg)
-                print 'guessing ', guess_msg
+                print 'guessing:', guess_msg
                 if guess_topic != '':
                     print 'guessing topic:', guess_topic
                     reply = self._getreply(user, guess_topic)

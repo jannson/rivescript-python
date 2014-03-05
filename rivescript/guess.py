@@ -18,7 +18,7 @@ class WhooshGuess(object):
 
     def train(self, key, line):
         splits = ' '.join(list(lang.tokenizezh(line)))
-        print splits
+        #print splits
         self.writer.add_document(key=key, content=splits)
 
     def train_ok(self):
