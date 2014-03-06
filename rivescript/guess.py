@@ -8,16 +8,38 @@ from whoosh.qparser import QueryParser
 
 import lang
 
+#TODO add more and more
+greeting = u'''
+招财进宝
+生意兴隆
+岁岁平安
+和气生财
+心想事成
+万事如意
+国家繁荣，人民祥和
+财源广进
+马到成功
+升官发财
+一路顺风
+祝你新的一年快乐幸福
+事业成功，家庭美满
+新年快乐
+恭祝新年吉祥，幸福和欢乐与你同在
+'''
+
 class WhooshGuess(object):
     def __init__(self):
         self.storage = RamStorage()
-        schema = Schema(key=TEXT(stored=True), \
+        schema = Schema(key=ID(stored=True), \
                 content=TEXT(stored=True, analyzer=RegexTokenizer()))
         self.ix = self.storage.create_index(schema)
         self.writer = self.ix.writer()
 
+        for s in greeting.split('\n'):
+            self.train(u'matchinggreeting', s)
+
     def train(self, key, line):
-        splits = ' '.join(list(lang.tokenizezh(line)))
+        splits = u' '.join(list(lang.tokenizezh(line)))
         #print splits
         self.writer.add_document(key=key, content=splits)
 
@@ -53,3 +75,4 @@ if __name__ == '__main__':
         guess.train(s,s)
     guess.train_ok()
     print guess.guess(u'祖国')
+    print guess.guess(u'事业成功')

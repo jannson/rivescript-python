@@ -1,9 +1,142 @@
 // A generic set of chatting responses. This set mimicks the classic Eliza bot.
 
-+ music
-- 很喜欢音乐么
-- 音乐非常不错
-- 平常我很喜欢听音乐
+// Something normal greetings
+
++ matchingfirst
+- 很高兴见到你
+- 见到您非常荣幸
+
++ 你好
+- Hi, 很高兴见到你
+- Hello
+- 你好
+- 很高兴认识你
+- 幸会幸会
+- 久仰久仰
+
++ 很高兴见到你
+@ 你好
+
++ 很高兴认识你
+@ 你好
+
++ 幸会*
+@ 幸会幸会
+
++ 久仰*
+@ 久仰久仰
+
++ *久仰*
+- 久仰久仰
+
++ 谢谢
+- 不客气
+- 我们还客气什么
+- 我们不用客气
+
++ 谢谢你
+@ 谢谢
+
++ 谢了
+@ 谢谢
+
++ 我谢谢你
+- 是真城的么
+
++ (@okzh)
+% 是真城的么
+- 哈哈，那就好
+
+- 不是
+% 是真城的么
+- 好吧
+
++ 对不起
+- 没事
+- 没什么大不了的
+
++ 抱歉
+@ 对不起
+
++ 不好意思
+@ 对不起
+
++ 我错了
+@ 对不起
+
++ matchinggreeting
+- 谢谢，愿我把我最好的祝福来祝福你
+- 谢谢，有你的祝福我万分感动
+
+//Something normal asks
+
++ 你会*
+- 也许会 TODO
+
++ 如何*
+- TODO
+
++ 你*
+- 更相关我的信息访问这个网站<a href='http://www.toway.me'>突围俱乐部</a>
+- 要不要来<a target='_blank' href='http://www.toway.me'>突围俱乐部</a>了解更多。
+
+//Something funy
+
+> topic sorry
+	+ *
+	- 必须道歉才能继续对话
+
+	+ 对不起
+	- 没事没事，开玩笑的{topic=random}
+
+	+ [*]sorry[*]
+	@ 对不起
+	
+	+ 我错了
+	@ 对不起
+
+	+ [我]道歉
+	@ 对不起
+
+	+ [我]抱歉
+	@ 对不起
+< topic
+
++ <reply>
+- 你在重复我
+- 你在学我说话
+
++ <input>
+* <input> == <input4> => 好吧，重复的让我生气了{topic=sorry}
+* <input> == <input3> => 你还在重复你自己的话
+* <input> == <input2> => 你重复了你的话哦
+- 你刚才说过这句话了
+
++ 你为什么这么说
+- 我说:<reply>，是因为你说: <input>
+
++ 你为什么这样说
+- 我说:<reply>，是因为你说: <input>
+
++ 你为什么这样回答
+- 我说:<reply>，是因为你说: <input>
+
++ 你为什么这么回答
+- 我说:<reply>，是因为你说: <input>
+
++ 敲门
+- 是谁
+
++ *
+% 是谁呢
+- <star>是谁
+
++ *
+% *是谁
+- 哈哈，好玩
+
++ *是什么
+- 不知道是什么，点这里看看<a href='http://en.wikipedia.org/w/index.php?search=<star>' target='_blank'>查查</a>
 
 + [*] (sorry|apologize|apology) [*]
 - Please don't apologize.
@@ -71,7 +204,7 @@
 - Don't you know?
 - How likely, would you estimate?
 
-+ (hello|hi|hey|howdy|hola|hai|yo|你好)[*]
++ (hello|hi|hey|howdy|hola|hai|yo)[*]
 - 你好. 有什么要帮忙的么
 - Hi!
 
@@ -297,17 +430,3 @@
 - Does this topic make you feel angry?
 - Is something making you feel angry?
 - Does using that kind of language make you feel better?
-
-+ 敲门
-- 是谁
-
-+ *
-% 是谁呢
-- <star>是谁
-
-+ *
-% *是谁
-- 哈哈，好玩
-
-+ *是什么
-- 不知道是什么，点这里看看<a href='http://en.wikipedia.org/w/index.php?search=<star>' target='_blank'>查查</a>

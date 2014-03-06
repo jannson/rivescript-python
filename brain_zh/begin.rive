@@ -121,7 +121,7 @@
 ! sub bf        = boyfriend
 ! sub b/f       = boyfriend
 ! sub b/f/f     = best friend forever
-! sub 您		= 你
+! sub 您        = 你
 
 // Person substitutions
 ! person i am    = you are
@@ -132,8 +132,8 @@
 ! person your    = my
 ! person you     = I
 ! person i       = you
-! person 你       = 我
-! person 我		= 你
+! person 你     = 我
+! person 我     = 你
 
 // Set arrays
 ! array malenoun   = male guys boy dude boi man men gentleman gentlemen
@@ -150,7 +150,7 @@
 ! array colorzh     = 红|橙|黄|绿|青|蓝|紫
 ! array gfriendzh   = 老婆|女朋友|女友
 ! array bfriendzh   = 男朋友|男友|老公
-! array okzh        = 恩|好|行|成
+! array okzh        = 恩|好|行|成|是
 
 > object asksent python
     import random

@@ -19,11 +19,13 @@
 % 怎么称呼你
 - <set name=<formal>>很高兴认识你, <get name>.
 - <set name=<formal>><get name>, 你好啊.
+- <set name=<formal>>早听过您的大名
 
 + 叫我*
 % 怎么称呼你
 - <set name=<formal>>很高兴认识你, <get name>.
 - <set name=<formal>><get name>, 你好啊.
+- <set name=<formal>>早听过您的大名
 
 + *
 % 怎么称呼你
@@ -32,10 +34,12 @@
 + 我[名字]叫*
 - <set name=<formal>>很高兴认识你, <get name>.
 - <set name=<formal>><get name>, 你好啊.
+- <set name=<formal>>早听过您的大名
 
 + 叫我*
 - <set name=<formal>>很高兴认识你, <get name>.
 - <set name=<formal>><get name>, 你好!
+- <set name=<formal>>早听过您的大名
 
 + 我是*
 - 你叫<star>?
@@ -189,8 +193,13 @@
 - 很好奇的想听一听
 
 + *
-% 说来听听
 % 很好奇的想听一听
+- 恩，不错
+- 很可以
+- 有意思
+
++ *
+% 说来听听
 - 恩，不错
 - 很可以
 - 有意思

@@ -86,6 +86,7 @@ def normal_zh(ins):
     s = ins
     return merge_zh(s)
 
+reserve_pos = [u'n', u'v']
 ignore_pos = [u'不',u'没',u'未']
 filter_pos = ['c','u','y','z']
 
@@ -114,7 +115,8 @@ def find_zh(s):
 filter_pos2 = ['c','u','y','z','r','x','m']
 def tokenizezh(text):
     for w in pseg.cut(text):
-        if w.word.strip() != '' and not any(w.flag.find(fi) >= 0 for fi in filter_pos2):
+        if w.word.strip() != '' and (any(w.flag.find(fi) >= 0 for fi in reserve_pos) \
+            or (not any(w.flag.find(fi) >= 0 for fi in filter_pos2))):
             yield w.word.lower()
 
 class Tokenizer:
@@ -138,9 +140,9 @@ def normal_pos(ins):
             continue
         for w in pseg.cut(seg):
             t = (w.word, w.flag)
-            #print t[0] + ' / ' + t[1]
-            #print any(t[1].find(fi) >= 0 for fi in filter_pos)
-            if any(t[1].find(fi) >= 0 for fi in filter_pos) \
+            if any(t[1].find(fi) >= 0 for fi in reserve_pos):
+                words.append(t[0])
+            elif any(t[1].find(fi) >= 0 for fi in filter_pos) \
                     or (t[1].find('d') >= 0 and all(t[0].find(ig) < 0 for ig in ignore_pos)):
                 #if words[-1] == ' ':
                 #    continue
@@ -185,8 +187,19 @@ def test_merge_zh():
 def test_pos():
     s = u'是谁呢'
     assert(u'是谁'== normal_pos(s))
-    s = '_2005年我们出去玩2，_ 然后聘情况！知道道理5abc如何走*。这么说不 *'
+    s = u'你会讲英语吗'
+    assert(u'你会讲英语' == normal_pos(s))
+    s = u'_2005年我们出去玩2，_ 然后聘情况！知道道理5abc如何走*。这么说不 *'
     print list(pseg.cut(s))
+
+def test_tokenzh():
+    s = u'你是谁呢'
+    assert(u'是' == u''.join(list(tokenizezh(s))))
+    s = u'你会讲英语吗'
+    assert(u'会讲英语' == u''.join(list(tokenizezh(s))))
+    s = u'can you speak eng, 能吗'
+    #print "BEGIN:"+u' '.join(list(tokenizezh(s)))+":END"
+    assert(u'can you speak eng 能' == u' '.join(list(tokenizezh(s))))
 
 def test_sens():
     sents = sentences("First.  Second, still?  Third and Final!  Well, not really")
@@ -199,5 +212,6 @@ def test_sens():
 if __name__ == '__main__':
     test_merge_zh()
     test_pos()
+    test_tokenzh()
     test_sens()
 

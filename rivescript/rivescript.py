@@ -1729,16 +1729,17 @@ the value is unset at the end of the `reply()` method)."""
             for type in ['input', 'reply']:
                 tags = re.findall(r'<' + type + r'([0-9])>', regexp)
                 for index in tags:
-                    index = int(index) - 1
+                    index = int(index)
                     rep = self._format_message(self._users[user]['__history__'][type][index])
-                    regexp = re.sub(r'<' + type + str(index) + r'>', rep, regexp)
+                    #print '<INPUT'+str(index)+':', regexp, '<' + type + str(index) + r'>', rep
+                    regexp = re.sub(r'<' + type + str(index) + r'>', rep, regexp, re.U)
                 regexp = re.sub(
                     '<' + type + '>',
                     self._format_message(self._users[user]['__history__'][type][0]),
                     regexp
                 )
                 # TODO: the Perl version doesn't do just <input>/<reply> in trigs!
-
+            #print "<INPUT>:" + regexp
         return regexp
 
     def _process_tags(self, user, msg, reply, st=[], bst=[], depth=0):
