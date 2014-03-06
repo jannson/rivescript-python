@@ -8,8 +8,7 @@ rs = RiveScript(debug=False, utf8=True)
 rs.load_directory("./brain_zh")
 rs.sort_replies()
 
-#only have to train once
-#rs.train_topics()
+rs.train()
 
 print """This is a bare minimal example for how to write your own RiveScript bot!
 

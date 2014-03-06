@@ -173,42 +173,6 @@
 % 她很漂亮吧
 - 你老婆必须得漂亮！
 
-//Matching else
-
-+ 知道我是*{weight=100}
-- 讲给我听听
-- 告诉我听听
-- 还不了解，告诉我呗
-
-+ 知道*是*{weight=50}
-- <person>是什么
-- 你来告诉我<person>是什么
-
-+ 知道*
-- <person>是什么
-- 你来告诉我<person>是什么
-
-+ 我有*
-- 说来听听
-- 很好奇的想听一听
-
-+ *
-% 很好奇的想听一听
-- 恩，不错
-- 很可以
-- 有意思
-
-+ *
-% 说来听听
-- 恩，不错
-- 很可以
-- 有意思
-
-+ (@okzh)
-- 恩
-- 真好
-- 那就这样
-
 + my name is <bot master>
 - <set name=<bot master>>That's my master's name too.
 

@@ -76,9 +76,60 @@
 + 如何*
 - TODO
 
++ 我记得*
+- 你常常想起来<star>吗
+- 你想起来<star>的同时，还想起来其它的东西吗
+- 为何你突然想起来<star>？
+- 什么情况让你突然想起来<star>
+- 我与<star>有什么联系？
+- 还有其它东西让你想起来<star>吗？
+
++ 你记得*
+- 你觉得我会忘记<star>吗
+- 为何我要想起来<star>？
+- <star>是关于什么的？
+- 你提到<star>了吗？
+
 + 你*
 - 更相关我的信息访问这个网站<a href='http://www.toway.me'>突围俱乐部</a>
 - 要不要来<a target='_blank' href='http://www.toway.me'>突围俱乐部</a>了解更多。
+
++ 知道我是*{weight=100}
+- 讲给我听听
+- 告诉我听听
+- 还不了解，告诉我呗
+
++ 知道*是*{weight=50}
+- <person>是什么
+- 你来告诉我<person>是什么
+
++ 知道*
+- <person>是什么
+- 你来告诉我<person>是什么
+
++ 我有*
+- 说来听听
+- 很好奇的想听一听
+
++ *
+% 很好奇的想听一听
+- 恩，不错
+- 很可以
+- 有意思
+
++ *
+% 说来听听
+- 恩，不错
+- 很可以
+- 有意思
+
++ *是什么
+- 不知道是什么，点这里看看<a href='http://en.wikipedia.org/w/index.php?search=<star>' target='_blank'>查查</a>
+
++ (@okzh)
+- 恩
+- 真好
+- 那就这样
 
 //Something funy
 
@@ -123,20 +174,6 @@
 
 + 你为什么这么回答
 - 我说:<reply>，是因为你说: <input>
-
-+ 敲门
-- 是谁
-
-+ *
-% 是谁呢
-- <star>是谁
-
-+ *
-% *是谁
-- 哈哈，好玩
-
-+ *是什么
-- 不知道是什么，点这里看看<a href='http://en.wikipedia.org/w/index.php?search=<star>' target='_blank'>查查</a>
 
 + [*] (sorry|apologize|apology) [*]
 - Please don't apologize.
@@ -205,7 +242,7 @@
 - How likely, would you estimate?
 
 + (hello|hi|hey|howdy|hola|hai|yo)[*]
-- 你好. 有什么要帮忙的么
+- hai, what can I help U?
 - Hi!
 
 + [*] computer [*]
