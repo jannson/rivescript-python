@@ -124,6 +124,7 @@
 - <set status=单身>多参加活动，马年马上就有一个
 
 + 你知道我名字
+* <get name> == undefined => 你还没告诉我名字
 - 你叫<get name>
 
 + 我叫什么[名字]

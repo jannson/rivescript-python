@@ -208,10 +208,87 @@ def test_sens():
     for s in sents:
         print s, ' / ',
 
+questions_pos = set([u'什么r', u'哪儿r', u'哪r', u'怎么r', u'谁r', u'吗y', u'呢y'])
+def is_question(s):
+    s = s.strip()
+    if s == '':
+        return False
+
+    cuts = list(pseg.cut(s))
+    pos = [w.word+w.flag for w in cuts]
+    pos_set = set(pos)
+    words = [w.word for w in cuts]
+    flags = [w.flag for w in cuts]
+    
+    if u'是v' in pos_set and u'还是c' in pos_set:
+        return True
+    if pos[-1] == u'不d':
+        return True
+    if len(pos_set & questions_pos) > 0:
+        return True
+    sel = next((x for x in range(len(pos)) if pos[x] in [u'不d',u'还是c']), 0)
+    if sel > 0:
+        p1, p2 = set(pos[0:sel]), set(pos[sel+1:])
+        if len(p1 & p2) > 0:
+            return True
+    sel = next((x for x in range(len(words)) if words[x] == u'不'), 0)
+    if sel > 0 and words[sel-1] == words[sel+1]:
+        return True
+    
+    return False
+        
+def ask_sents():
+    s = u'''
+    你们什么时候开学
+    我的书包在哪儿
+    你怎么能这样
+    你要去哪
+    谁是那个小偷
+    你是喝可乐还是啤酒
+    你去呢还是我去
+    你去还是我去
+    游泳池里的人多不多
+    这事是不是你干的
+    我们明天爬山好不好
+    你想去吗
+    你愿意跟我在一起吗
+    你饿了吧
+    这个网站挺有意思啊
+    这事还能瞒得过他
+    谁敲门
+    你几岁
+    你去哪儿
+    你的车怎么了
+    你去不去上海
+    你有足够的钱没有
+    你这样做不好吧
+    电话呢
+    背包呢
+    那棵树多大
+    你母亲多高
+    他去不
+    他走还是不走
+    你说这宏不宏伟
+    你们说这壮不壮观
+    下面开始陈述句
+    地球很大
+    他们跑足球
+    你快走
+    你走快点
+    你走去那儿
+    今天天气真冷
+    这孩子多聪明啊
+    你确实还是太笨了
+    '''
+    
+    for ss in s.split('\n'):
+        print list(pseg.cut(ss.strip())), is_question(ss.strip())
+
 # self-test
 if __name__ == '__main__':
     test_merge_zh()
     test_pos()
     test_tokenzh()
-    test_sens()
+    #test_sens()
+    ask_sents()
 
