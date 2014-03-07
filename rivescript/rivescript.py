@@ -13,7 +13,7 @@ import codecs
 from wordsub import WordSub
 import lang
 from thomas import Bayes
-from guess import WhooshGuess
+from guess import WhooshGuess as Guess
 
 from . import __version__
 from . import python
@@ -47,7 +47,7 @@ class RiveScript:
     # Initialization and Utility Methods                                       #
     ############################################################################
 
-    def __init__(self, debug=False, strict=True, depth=50, log="", utf8=False):
+    def __init__(self, debug=False, strict=True, depth=50, log="", utf8=False, guess_obj=None):
         """Initialize a new RiveScript interpreter.
 
 bool debug:  Specify a debug mode.
@@ -88,6 +88,12 @@ bool utf8:   Enable UTF-8 support."""
 
         self._say("Interpreter initialized.")
 
+        self.guess_obj = guess_obj
+        if guess_obj:
+            self.for_train = True
+        else:
+            self.for_train = False
+
     @classmethod
     def VERSION(self=None):
         """Return the version number of the RiveScript library.
@@ -124,6 +130,8 @@ This may be called as either a class method of a method of a RiveScript object."
         is `.rive`, `.rs`"""
         self._say("Loading from directory: " + directory)
 
+        self.directory = directory
+
         if ext is None:
             # Use the default extensions - .rive is preferable.
             ext = ['.rive', '.rs']
@@ -134,19 +142,6 @@ This may be called as either a class method of a method of a RiveScript object."
         if not os.path.isdir(directory):
             self._warn("Error: " + directory + " is not a directory.")
             return
-            
-        # update by jannson
-        # Have to load_directory first
-        ''' Using whoosh instead
-        self.bayes = Bayes(tokenizer = lang.Tokenizer())
-        self.bayes_name = os.path.join(directory, "bayes.bay")
-        try:
-            pass    #self.bayes.load(self.bayes_name)
-        except:
-            self._warn("Alert: Failed to load bayes")
-            self.bayes.save(self.bayes_name)
-            self.bayes.load(self.bayes_name)
-        '''
 
         for item in os.listdir(directory):
             for extension in ext:
@@ -155,53 +150,43 @@ This may be called as either a class method of a method of a RiveScript object."
                     self.load_file(os.path.join(directory, item))
                     break
     
-    # Ignore this function
-    def train_topics(self):
-        for k1,v1 in self._topics.iteritems():
-            k1 = k1.strip()
-            for k2,v2 in v1.iteritems():
-                line = k2.strip()
-                if not k2.startswith('matching') and self._is_atomic(k2) and 'reply' in v2:
-                    key = re_quote.sub(' ', k2)
-                    '''
-                    line = key
-                    for i,l in v2['reply'].iteritems():
-                        if isinstance(i, int):
-                            line += u' ' + re_quote.sub(' ', l)
-                    #print key, line
-                    '''
-                    self.bayes.train(key, line)
-        self.bayes.save(self.bayes_name)
-
     def train(self):
-        self.guess_obj = WhooshGuess()
-        for k1,v1 in self._topics.iteritems():
-            k1 = k1.strip()
-            for k2,v2 in v1.iteritems():
-                line = k2.strip()
-                if not k2.startswith('matching') and self._is_atomic(k2) and 'reply' in v2:
-                    key = re_quote.sub(' ', k2)
-                    self.guess_obj.train(key, line)
-        self.guess_obj.train_ok()
+        if self.for_train:
+            #TODO do better for this
+            for k1,v1 in self._topics.iteritems():
+                k1 = k1.strip()
+                for k2,v2 in v1.iteritems():
+                    line = k2.strip()
+                    if not k2.startswith('matching') and self._is_atomic(k2) and 'reply' in v2:
+                        key = re_quote.sub(' ', k2)
+                        self.guess_obj.train(key, line)
+            self.guess_obj.train_ok()
+        else:
+            assert(self.guess_obj is None)
+            self.guess_obj = Guess()
+            train_rs = RiveScript(utf8=True, guess_obj=self.guess_obj)
+            train_rs.load_directory(self.directory)
+            train_rs.sort_replies()
+            train_rs.train()
 
-    def guess(self, s):
-        return self.guess_obj.guess(s)
+    def guess(self, s, is_ask = None):
+        return self.guess_obj.guess(s, is_ask)
         
     def load_file(self, filename):
         """Load and parse a RiveScript document."""
         self._say("Loading file: " + filename)
 
         fh    = codecs.open(filename, 'r', 'utf-8')
-        #lines = fh.readlines()
-        lines = []
-
-        for li in fh.readlines():
-            i = cmd_li(li)
-            if li[i] == u'+' or li[i] == u'%':
-                lines.append(lang.normal_pos(li))
-            else:
-                #support for python indent
-                lines.append(li[:i] + lang.normal_zh(li))
+        if self.for_train:
+            lines = fh.readlines()
+        else:
+            lines = []
+            for li in fh.readlines():
+                i = cmd_li(li)
+                if li[i] == u'+' or li[i] == u'%':
+                    lines.append(lang.normal_pos(li))
+                else:
+                    lines.append(li[:i] + lang.normal_zh(li))
         fh.close()
 
         self._say("Parsing " + str(len(lines)) + " lines of code from " + filename)
@@ -1242,7 +1227,7 @@ the value is unset at the end of the `reply()` method)."""
     # Reply Fetching Methods                                                   #
     ############################################################################
 
-    def reply(self, user, msg):
+    def reply(self, user, msg, is_ask = None):
         """Fetch a reply from the RiveScript brain."""
         self._say("Get reply to [" + user + "] " + msg)
 
@@ -1279,15 +1264,13 @@ the value is unset at the end of the `reply()` method)."""
         #updated by jannson
         matchingtopic = u'matchingtopic'
         if reply.strip() == matchingtopic:
-            guess_msg = msg
-            if guess_msg.strip() != '':
-                guess_topic = self.guess(guess_msg)
-                print 'guessing:', guess_msg
-                if guess_topic != '':
-                    print 'guessing topic:', guess_topic
-                    reply = self._getreply(user, guess_topic)
+            guess_topic = self.guess(old_msg, is_ask)
+            guess_topic = lang.normal_pos(guess_topic)
+            if guess_topic != '':
+                print 'guessing topic:', guess_topic
+                reply = self._getreply(user, guess_topic)
             if reply == matchingtopic:
-                reply = self._getreply(user, u'matchingnothing')
+                reply = self._getreply(user, u'matchingnothing ' + old_msg)
 
         # Save their reply history.
         oldInput = self._users[user]['__history__']['input'][:8]

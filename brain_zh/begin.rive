@@ -154,8 +154,11 @@
 
 > object asksent python
     import random
+    import lang
     # This function demonstrates using rs.current_user() to get
     # the current user ID, to set a variable for them.
+    if lang.is_question(args[0]):
+        return u'matchingasking'
     uid   = rs.current_user()
     asks = [u'name',u'age',u'location',u'sex',u'status',u'nothingtwo']
     random.shuffle(asks)
@@ -172,8 +175,17 @@
 + *
 - matchingtopic
 
-+ matchingnothing
-@ <call>asksent</call>
++ matchingnothing *
+@ <call>asksent <star></call>
+
++ matchingasking
+- 无法理解你的这个问题，不过我已经记住了，以后再回答你
+- 我回答不了你的这个问题，需要请教管理员吗
+- 我需要继续学习才能理解你的这个问题，不过在这之前你可以请教管理员
+
++ 需要
+% 我回答不了你的这个问题，需要请教管理员吗
+- 现在呼唤管理员...
 
 + matchingnothingtwo
 - 不大理解

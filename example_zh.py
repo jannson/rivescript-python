@@ -27,10 +27,10 @@ while True:
     s = raw_input("You> ")
     if s == '/quit':
         quit()
-    for msg in sentences(s):
+    for msg, is_ask in sentences(s):
         if  msg.strip() == '':
             continue
-        reply = rs.reply("localuser", msg)
+        reply = rs.reply("localuser", msg, is_ask)
         print "Bot>", reply
 
 # vim:expandtab

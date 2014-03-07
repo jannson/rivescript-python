@@ -96,9 +96,9 @@
 - <star>是关于什么的？
 - 你提到<star>了吗？
 
-+ 你*
-- 更相关我的信息访问这个网站<a href='http://www.toway.me'>突围俱乐部</a>
-- 要不要来<a target='_blank' href='http://www.toway.me'>突围俱乐部</a>了解更多。
+//+ 你*
+//- 更相关我的信息访问这个网站<a href='http://www.toway.me'>突围俱乐部</a>
+//- 要不要来<a target='_blank' href='http://www.toway.me'>突围俱乐部</a>了解更多。
 
 + 知道我是*{weight=100}
 - 讲给我听听

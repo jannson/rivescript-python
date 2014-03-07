@@ -68,15 +68,18 @@ def sentences(s):
         try: f = s.index('~', pos)
         except: f = l+1
         end = min(p,q,e,f)
-        sentenceList.append( s[pos:end].strip() )
+        if end == e:
+            sentenceList.append( (s[pos:end].strip(), True) )
+        else:
+            sentenceList.append( (s[pos:end].strip(), False) )
         pos = end+1
     # If no sentences were found, return a one-item list containing
     # the entire input string.
-    if len(sentenceList) == 0: sentenceList.append(s)
+    if len(sentenceList) == 0: sentenceList.append( (s,None) )
     sens = []
-    for ins in sentenceList:
+    for ins, ask in sentenceList:
         s = re.sub(ur'(?u)\W+', ' ', ins, re.U)
-        sens.append(s)
+        sens.append( (s, ask) )
     return sens
 
 def normal_zh(ins):
@@ -88,7 +91,7 @@ def normal_zh(ins):
 
 reserve_pos = [u'n', u'v']
 ignore_pos = [u'不',u'没',u'未']
-filter_pos = ['c','u','y','z']
+filter_pos = ['c','u','y','z','e']
 
 def find_zh(s):
     tmp = s[0]
@@ -112,12 +115,20 @@ def find_zh(s):
                 tmp = w
     yield tmp, hz
 
-filter_pos2 = ['c','u','y','z','r','x','m']
+#filter_pos2 = ['c','u','y','z','r','x','m']
+reserve_pos2 = [u'n', u'eng', u's']
 def tokenizezh(text):
     for w in pseg.cut(text):
         if w.word.strip() != '' and (any(w.flag.find(fi) >= 0 for fi in reserve_pos) \
-            or (not any(w.flag.find(fi) >= 0 for fi in filter_pos2))):
+            or (not any(w.flag.find(fi) >= 0 for fi in filter_pos))):
             yield w.word.lower()
+
+def keyword(text):
+    for w in pseg.cut(text):
+        if w.word.strip() != '' and \
+             ( any(w.flag.find(fi) >= 0 for fi in reserve_pos2) \
+                    or any(w.word.find(fi) >= 0 for fi in [u'我', u'你', u'他']) ):
+                yield w.word.lower()
 
 class Tokenizer:
     def tokenize(self, text):
@@ -191,7 +202,14 @@ def test_pos():
     assert(u'你会讲英语' == normal_pos(s))
     s = u'_2005年我们出去玩2，_ 然后聘情况！知道道理5abc如何走*。这么说不 *'
     print list(pseg.cut(s))
+    s = u'户外活动有哪些'
+    print list(pseg.cut(s))
+    s = u'知道这条路怎么走吗'
+    print list(pseg.cut(s))
+    s = u'小突想知道这条路怎么走'
+    print list(pseg.cut(s))
 
+'''
 def test_tokenzh():
     s = u'你是谁呢'
     assert(u'是' == u''.join(list(tokenizezh(s))))
@@ -200,6 +218,9 @@ def test_tokenzh():
     s = u'can you speak eng, 能吗'
     #print "BEGIN:"+u' '.join(list(tokenizezh(s)))+":END"
     assert(u'can you speak eng 能' == u' '.join(list(tokenizezh(s))))
+    s = u'户外活动有哪些'
+    assert(u'户外活动有' == u''.join(list(tokenizezh(s))))
+'''
 
 def test_sens():
     sents = sentences("First.  Second, still?  Third and Final!  Well, not really")
@@ -208,7 +229,9 @@ def test_sens():
     for s in sents:
         print s, ' / ',
 
-questions_pos = set([u'什么r', u'哪儿r', u'哪r', u'怎么r', u'谁r', u'吗y', u'呢y'])
+questions_pos = set([u'什么r', u'哪儿r', u'哪r', u'怎么r', u'如何r', u'为什么r',\
+        u'为啥r', u'为何r', u'谁r', u'吗y', u'呢y'])
+
 def is_question(s):
     s = s.strip()
     if s == '':
@@ -216,29 +239,58 @@ def is_question(s):
 
     cuts = list(pseg.cut(s))
     pos = [w.word+w.flag for w in cuts]
-    pos_set = set(pos)
     words = [w.word for w in cuts]
-    flags = [w.flag for w in cuts]
+    pos_set = set(pos)
+    #print u' '.join(pos)
     
     if u'是v' in pos_set and u'还是c' in pos_set:
         return True
+
     if pos[-1] == u'不d':
         return True
+
     if len(pos_set & questions_pos) > 0:
         return True
+
+    for x in pos:
+        if x[-1] == u'r' and any(x.find(fi) >= 0 for fi in [u'为', u'什么', u'哪']):
+            return True
+        if x[-1] == u'l' and x.find(u'什么') >= 0:
+            return True
+
     sel = next((x for x in range(len(pos)) if pos[x] in [u'不d',u'还是c']), 0)
     if sel > 0:
         p1, p2 = set(pos[0:sel]), set(pos[sel+1:])
         if len(p1 & p2) > 0:
             return True
-    sel = next((x for x in range(len(words)) if words[x] == u'不'), 0)
+
+    # Now remove all "r"s
+    pos = [w.word+w.flag for w in cuts if w.flag != 'r']
+    words = [w.word for w in cuts if w.flag != 'r']
+
+    sel = next((x for x in range(len(words)) if words[x] in [u'不',u'没']), 0)
     if sel > 0 and words[sel-1] == words[sel+1]:
         return True
-    
+
+    sel = s.find(u'不')
+    if sel <= 0:
+        sel = s.find(u'没')
+    if sel > 0 and s[:sel].find(s[sel+1]) >= 0:
+        return True
+
+    sel = 0
+    for x in pos:
+        if len(set([u'多',u'几']) & set(x)) > 0:
+            if len(x) == 2 and pos[-1][-1] == 'a':
+                return True
+            if len(x) > 2 and x[-1] == 'm':
+                return True
+        sel += 1
+
     return False
         
 def ask_sents():
-    s = u'''
+    asks = u'''
     你们什么时候开学
     我的书包在哪儿
     你怎么能这样
@@ -249,28 +301,40 @@ def ask_sents():
     你去还是我去
     游泳池里的人多不多
     这事是不是你干的
+    那个笨蛋有没有钱
     我们明天爬山好不好
     你想去吗
     你愿意跟我在一起吗
-    你饿了吧
-    这个网站挺有意思啊
-    这事还能瞒得过他
     谁敲门
+    他如何帮我搞定这个事情的
+    你为什么要这样
+    你这是为啥啊
+    户外活动有哪些
+    你哪去
+    你为何如此
+    那棵树多大
     你几岁
     你去哪儿
     你的车怎么了
     你去不去上海
     你有足够的钱没有
-    你这样做不好吧
     电话呢
     背包呢
-    那棵树多大
     你母亲多高
     他去不
     他走还是不走
     你说这宏不宏伟
     你们说这壮不壮观
-    下面开始陈述句
+    你多少岁了
+    你干什么工作
+    '''
+    
+    no_asks = u'''
+    你这样做不好吧
+    这事还能瞒得过他
+    你饿了吧
+    这个网站挺有意思啊
+    下面开始是陈述句
     地球很大
     他们跑足球
     你快走
@@ -280,15 +344,22 @@ def ask_sents():
     这孩子多聪明啊
     你确实还是太笨了
     '''
-    
-    for ss in s.split('\n'):
-        print list(pseg.cut(ss.strip())), is_question(ss.strip())
+    #你是什么东西 assert error hear
+    #我哪儿也不去
+
+    for s in asks.split(u'\n'):
+        if s.strip() != '':
+            assert(is_question(s.strip()))
+
+    for s in no_asks.split(u'\n'):
+        if s.strip() != '':
+            assert(not is_question(s.strip()))
 
 # self-test
 if __name__ == '__main__':
     test_merge_zh()
     test_pos()
-    test_tokenzh()
+    #test_tokenzh()
     #test_sens()
     ask_sents()
 
