@@ -160,12 +160,12 @@
     if lang.is_question(args[0]):
         return u'matchingasking'
     uid   = rs.current_user()
-    asks = [u'name',u'age',u'location',u'sex',u'status',u'nothingtwo']
+    asks = [u'name',u'age',u'location',u'sex',u'status']
     random.shuffle(asks)
     rlt = 'undefined'
     for ask in asks:
         if ask not in rs._users[uid]:
-            rlt = u'matching'+ask
+            rlt = u'matchingnothingtwo matching'+ask
             rs._users[uid]['ask'] = rlt
             break
     #print(rlt)
@@ -178,21 +178,12 @@
 + matchingnothing *
 @ <call>asksent <star></call>
 
-+ matchingasking
-- 无法理解你的这个问题，不过我已经记住了，以后再回答你
-- 我回答不了你的这个问题，需要请教管理员吗
-- 我需要继续学习才能理解你的这个问题，不过在这之前你可以请教管理员
-
-+ 需要
-% 我回答不了你的这个问题，需要请教管理员吗
-- 现在呼唤管理员...
-
-+ matchingnothingtwo
-- 不大理解
-- 你说什么呢
++ matchingnothingtwo *
+- 咱换个话题， {@ <star>}
+- 这个没有意思，我倒想问：{@ <star>}
 - 很有意思，继续
-- 那个那个，说详细点
-- 讨论些有意思的呗
+- 什么啊，说详细点
+- 讨论些有意思的呗,比如：{@ <star>}
 
 + matchingnoise *
 - 哦

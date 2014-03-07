@@ -1,31 +1,14 @@
 // Administrative functions.
 
-+ shutdown{weight=10000}
-* <id> eq <bot master> => Shutting down... <call>shutdown</call>
-- {@botmaster only}
++ matchingasking
+- 无法理解你的这个问题，不过我已经记住了，以后再回答你
+- 我回答不了你的这个问题，需要请教管理员吗
+- 我需要继续学习才能理解你的这个问题，不过在这之前你可以请教管理员
 
-+ 关闭{weight=10000}
-- 关闭中... <call>shutdown</call>
++ 需要
+% 我回答不了你的这个问题，需要请教管理员吗
+- 还没有实现管理员呼叫功能，你可以加QQ群：283105504
 
-+ 来个测试
-* <call>rtest</call> == test => 测试正常
-- 测试失败
++ 请教管理员
+- 管理员不在线，你可以加QQ群：283105504
 
-+ botmaster only
-- This command can only be used by my botmaster. <id> != <bot master>
-
-> object shutdown perl
-    my ($rs) = @_;
-
-    # Shut down.
-    exit(0);
-< object
-
-> object shutdown python
-    # Shut down
-    exit(0)
-< object
-
-> object rtest python
-    return 'test'
-< object
