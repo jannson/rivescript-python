@@ -162,7 +162,7 @@
     uid   = rs.current_user()
     asks = [u'name',u'age',u'location',u'sex',u'status']
     random.shuffle(asks)
-    rlt = 'undefined'
+    rlt = 'matchingrandomtopic'
     for ask in asks:
         if ask not in rs._users[uid]:
             rlt = u'matchingnothingtwo matching'+ask
@@ -179,11 +179,15 @@
 @ <call>asksent <star></call>
 
 + matchingnothingtwo *
-- 咱换个话题， {@ <star>}
+- 话说回来， {@ <star>}
 - 这个没有意思，我倒想问：{@ <star>}
 - 很有意思，继续
 - 什么啊，说详细点
 - 讨论些有意思的呗,比如：{@ <star>}
+
++ matchingrandomtopic
+- 很有意思，继续
+- 什么啊，说详细点
 
 + matchingnoise *
 - 哦
