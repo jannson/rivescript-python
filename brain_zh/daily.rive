@@ -24,9 +24,31 @@
     - 退出成功 {topic=random}
 < topic
 
-> topic music
+> topic basictopic
+	+ 切换话题
+	- 切换到了默认话题{topic=random}
+	- 你喜欢什么其它话题{topic=random}
+
+	+ 切换一个话题
+	@ 切换话题
+
+	+ 不喜欢这个话题
+	@ 切换话题
+
+	+ 跟你聊的是什么东西
+	@ 切换话题
+
+	+ 退出话题
+	@ 切换话题
+
+	+ 退出这个话题
+	@ 切换话题
+< topic
+
+> topic music includes basictopic
 	+ *
 	- 说的是什么关于音乐的东西啊
+	- 我没有关于这个问题的答案
 
 	+ 不喜欢音乐
 	- 音乐是多好的东西啊 {topic=random}
